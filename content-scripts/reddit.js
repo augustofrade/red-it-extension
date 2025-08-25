@@ -12,7 +12,8 @@
 
   class ContentHandler {
     static blocklistRegex = "";
-    static mode = "cover";
+    static mode = "hide";
+    static originalTitle = document.title;
     static metrics = {
       blockedPosts: 0,
     };
@@ -29,13 +30,18 @@
 
       this.blocklistRegex = new RegExp(regex, "gi");
       console.info("[RED-IT] Loaded blocklist");
+
+      this.mode = await browser.runtime.sendMessage("get-mode");
+      console.info("[RED-IT] Using mode:", this.mode);
     }
 
     static async handleMetrics() {
       console.log(`[RED-IT] Blocked ${this.metrics.blockedPosts} posts.`);
-      if (this.metrics.blockedPosts > 0) {
-        document.title = `(${this.metrics.blockedPosts}) ${document.title}`;
-      }
+      if (this.metrics.blockedPosts == 0)
+        return (document.title = this.originalTitle);
+
+      document.title = `(${this.metrics.blockedPosts}) ${this.originalTitle}`;
+      this.metrics.blockedPosts = 0;
     }
 
     /**
@@ -44,14 +50,18 @@
      * @param {HTMLElement} title
      */
     static handlePost(post, title) {
-      const postTitle = title.innerText;
+      const postTitle = title.textContent;
       const titleString = " " + postTitle + " ";
+
       if (titleString.match(this.blocklistRegex) === null) return;
+
+      this.resetPost(post);
+
+      if (this.mode === "show") return;
 
       console.log(`[RED-IT] Detected post: "${postTitle}"`);
       this.metrics.blockedPosts++;
 
-      this.resetPost(post);
       if (this.mode === "purge") {
         post.style.display = "none";
       } else if (this.mode === "cover") {
@@ -101,6 +111,14 @@
   }
   site.handle();
   ContentHandler.handleMetrics();
+
+  browser.runtime.onMessage.addListener(function (message) {
+    if (message.type === "update-mode") {
+      ContentHandler.mode = message.newMode;
+      site.handle();
+      ContentHandler.handleMetrics();
+    }
+  });
 
   return detectedPosts;
 })("cover");

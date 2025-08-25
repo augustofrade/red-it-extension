@@ -30,15 +30,27 @@ handleMessages({
       purge: "Removes the content from the page",
       cover: "Covers the content with a placeholder. You can hover to see it.",
       hide: "Blanks the content",
+      show: "Shows all content (disables the extension)",
     });
   },
   "set-mode": (message) => {
-    return browser.storage.sync.set({ mode: message.newMode });
+    return new Promise((resolve) => {
+      const { newMode } = message;
+      browser.storage.sync.set({ mode: newMode });
+
+      browser.tabs.query({ active: true }).then((tabs) => {
+        for (const tab of tabs) {
+          browser.tabs.sendMessage(tab.id, { type: "update-mode", newMode });
+        }
+      });
+
+      resolve(newMode);
+    });
   },
   "get-mode": () => {
     return new Promise((resolve) => {
       browser.storage.sync.get("mode").then((data) => {
-        resolve(data.mode || "purge");
+        resolve(data.mode || "hide");
       });
     });
   },
