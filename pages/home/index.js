@@ -11,7 +11,7 @@ function showStatus(message, isError = false) {
 }
 
 function saveChanges(rawList) {
-  rawList = rawList.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  rawList = rawList.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replaceAll("*", ".*");
 
   const list = rawList.split("\n").map((item) => item.trim());
 
@@ -27,7 +27,10 @@ function saveChanges(rawList) {
 }
 
 function setValues(values) {
-  $("#blocklist").value = values.blocklist.join("\n");
+  $("#blocklist").value = values.blocklist
+    .join("\n")
+    .replace(/\\/g, "")
+    .replace(".*", "*");
 }
 
 browser.storage.sync.get("blocklist").then((res) => {
