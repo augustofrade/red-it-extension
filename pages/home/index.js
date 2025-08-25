@@ -6,7 +6,7 @@ function showStatus(message, isError = false) {
   const statusEl = $("#status");
   statusEl.innerText = message;
   statusEl.classList.remove("d-none");
-  const styleClass = isError ? "alert-danger" : "alert-success";
+  const styleClass = isError ? "danger" : "success";
   statusEl.classList.add("alert-" + styleClass);
 }
 
@@ -25,6 +25,15 @@ function saveChanges(rawList) {
       showStatus("Error saving changes.", true);
     });
 }
+
+function setValues(values) {
+  $("#blocklist").value = values.blocklist.join("\n");
+}
+
+browser.storage.sync.get("blocklist").then((res) => {
+  const blocklist = res.blocklist || [];
+  setValues({ blocklist });
+});
 
 $("#submit-btn").on("click", function (e) {
   e.preventDefault();
