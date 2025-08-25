@@ -8,8 +8,8 @@
   "content_scripts": [
     {
       "matches": ["*://*.reddit.com/*"],
-      "js": ["reddit.js"],
-      "css": ["injected-styles.css"]
+      "js": ["content-scripts/reddit.js"],
+      "css": ["content-scripts/injected-styles.css"]
     }
   ],
 
