@@ -1,0 +1,99 @@
+# Red-It
+
+<p align="center">
+  <img src="public/red-it-icon.png" alt="Red-It Logo" width="128" height="128">
+</p>
+
+<p align="center">
+  <strong>Block content on Reddit based on its content</strong>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Firefox-Compatible-orange?style=flat-square&logo=firefox" alt="Firefox Compatible">
+  <img src="https://img.shields.io/badge/Version-0.2-blue?style=flat-square" alt="Version">
+</p>
+
+## 📖 Description
+
+Red-It is a Firefox extension designed to enhance the your Reddit browsing experience by allowing you to block unwanted posts based on keywords. Take control of your Reddit feed and filter out posts that contain specific words, phrases and simple patterns you'd rather not see.
+
+### ✨ Key Features
+
+- 🚫 **Content Blocking**: Block Reddit posts containing specific keywords in their title
+- 🎯 **Wildcard Support**: Use `*` to match any number of characters (e.g., "red\*" blocks both "reddit" and "red-it")
+- ⚙️ **Easy Configuration**: Simple popup interface for quick access
+- 🔄 **Real-time Filtering**: Content is filtered as you browse without page reloads
+- 💾 **Persistent Storage**: Your settings are saved and synced across browser sessions
+
+## 🧰 Usage Screenshots
+
+### Popup
+
+Popup that appears on the user's browser when the icon of the extension on the toolbar is clicked.
+
+![Extension Popup](public/screenshot-popup.png)
+
+### Popup with Menu Open
+
+Extension popup with the "Mode" button focused after being clicked, expanding a submenu with different modes one can choose to hide the content of the page.
+
+![Extension Popup with Menu Open](public/screenshot-popup-menu.png)
+
+### Settings Page
+
+![Settings Page Screenshot Placeholder](public/screenshot-settings.png)
+
+## 🚀 Installation
+
+### From Source
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/augustofrade/red-it-extension.git
+   cd red-it-extension
+   ```
+
+2. **Load the extension in Firefox**
+   - Open Firefox and navigate to `about:debugging`
+   - Click "This Firefox" in the sidebar
+   - Click "Load Temporary Add-on"
+   - Select the `src/manifest.json` file from the cloned repository
+
+### From Firefox Add-ons Store
+
+The extension will be available on the Firefox Add-ons store soon!
+
+## 🛠️ Usage
+
+### Basic Setup
+
+1. **Install the extension** following the installation instructions above
+2. **Click the Red-It icon** in your Firefox toolbar
+3. **Open Settings** to configure your blocklist
+4. **Add keywords** you want to block (one per line)
+5. **Browse Reddit** and enjoy your filtered experience!
+
+### Keyword Syntax
+
+- **Content per line**: each line is a different keyword or phrase for the extension to use as filter
+- **Exact match**: `javascript` - blocks posts containing "javascript"
+- **Wildcard**: `java*` - blocks posts containing "javascript", "java", etc.
+- **Case insensitive**: All keywords are matched case-insensitively
+
+### 📝 Reporting Issues
+
+Found a bug or have a feature request? Please [open an issue](https://github.com/augustofrade/red-it-extension/issues) with:
+
+- Clear description of the issue or feature
+- Steps to reproduce (for bugs)
+- Expected vs actual behavior
+- Screenshots if applicable
+
+## 📄 License
+
+This project is free software. See the [LICENSE](LICENSE) file for details.
+
+## Source
+
+- Icons by [Font Awesome](https://fontawesome.com/)
