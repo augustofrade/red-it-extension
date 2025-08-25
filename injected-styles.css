@@ -1,0 +1,23 @@
+.unwanted-post {
+  position: relative;
+}
+
+.unwanted-post::after {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  background-color: #eee;
+  content: "";
+  box-sizing: border-box;
+  padding: 10px 40px;
+  z-index: 1;
+  border-radius: 16px;
+}
+
+.unwanted-post:hover::after {
+  display: none;
+}

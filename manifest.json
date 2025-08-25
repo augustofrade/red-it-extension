@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "Red-It",
+  "version": "0.1",
+
+  "description": "Block content on Reddit based on its content",
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.reddit.com/*"],
+      "js": ["reddit.js"],
+      "css": ["injected-styles.css"]
+    }
+  ],
+
+  "permissions": ["tabs", "storage"],
+
+  "browser_action": {
+    "default_title": "Red-It"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  }
+}
