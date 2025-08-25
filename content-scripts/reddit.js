@@ -26,10 +26,8 @@
       if (blockListString?.every === undefined) blockListString = [];
 
       const regex = RegexHelper.fromArray(blockListString).source;
-      console.log(regex);
 
       this.blocklistRegex = new RegExp(regex, "gi");
-      console.log("Blocklist regex:", this.blocklistRegex);
       console.info("[RED-IT] Loaded blocklist");
     }
 
