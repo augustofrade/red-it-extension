@@ -3,6 +3,11 @@
   "name": "Red-It",
   "version": "0.1",
 
+  "icons": {
+    "32": "icons/icon.png",
+    "64": "icons/icon@2x.png"
+  },
+
   "description": "Block content on Reddit based on its content",
 
   "content_scripts": [
@@ -16,7 +21,8 @@
   "permissions": ["tabs", "storage"],
 
   "browser_action": {
-    "default_title": "Red-It"
+    "default_title": "Red-It",
+    "default_popup": "popup/popup.html"
   },
 
   "background": {
