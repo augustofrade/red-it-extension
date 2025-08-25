@@ -1,0 +1,1 @@
+cd src && zip -FS -r ../red-it.zip *
