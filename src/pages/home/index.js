@@ -12,10 +12,47 @@ class Status {
   }
 
   static _showStatus(statusEl, message, isError = false) {
+    this._resetAllAlerts();
     statusEl.innerText = message;
     statusEl.classList.remove("d-none");
     const styleClass = isError ? "danger" : "success";
     statusEl.classList.add("alert-" + styleClass);
+  }
+
+  static _resetAllAlerts() {
+    $$(".alert").forEach((el) => {
+      if (!el.classList.contains("d-none")) {
+        el.classList.add("d-none");
+      }
+    });
+  }
+}
+
+class ExtensionDataResetOption {
+  static init() {
+    this.button = $("#reset-data-btn");
+    this.button.on("click", this._showConfirmationModal.bind(this));
+  }
+
+  static _showConfirmationModal() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all extension data? This action cannot be undone."
+    );
+    if (confirmed) {
+      this._clearData();
+    }
+  }
+
+  static _clearData() {
+    browser.storage.sync
+      .clear()
+      .then(() => {
+        Status.ExtensionSettings("All extension data cleared.");
+      })
+      .catch((err) => {
+        console.log(err);
+        Status.ExtensionSettings("Error clearing extension data.", true);
+      });
   }
 }
 
@@ -79,3 +116,5 @@ $("#submit-btn").on("click", function (e) {
     hideNsfw,
   });
 });
+
+ExtensionDataResetOption.init();
