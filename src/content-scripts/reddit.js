@@ -68,8 +68,10 @@
     static handlePost(post, title, isNsfw = false, subreddit) {
       const titleString = " " + title + " ";
       subreddit = subreddit?.replace("r/", "").trim();
+
       this.resetPost(post);
       if (this.mode === "show") return;
+
       const titleMatch = titleString.match(this.blocklistRegex) !== null;
       const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
       const shouldBlock =
@@ -112,7 +114,7 @@
         const title = post.querySelector(".title a").textContent;
         const isNsfw = post.querySelector(".nsfw-stamp") !== null;
         const subreddit = post.querySelector(".subreddit")?.innerText;
-        ContentHandler.handlePost(post, title.innerText, isNsfw, subreddit);
+        ContentHandler.handlePost(post, title, isNsfw, subreddit);
       }
     }
   }
