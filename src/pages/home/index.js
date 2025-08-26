@@ -3,23 +3,23 @@ const $$ = document.querySelectorAll.bind(document);
 Element.prototype.on = Element.prototype.addEventListener;
 
 /**
- * Wrapper for displaying status messages to the user with a chosen alert element.
+ * Wrapper for displaying alert messages to the user with a chosen alert element.
  */
-class Status {
+class Alert {
   static ExtensionSettings(message, isError = false) {
-    this._showStatus($("#settings-status-extension"), message, isError);
+    this._showAlert($("#settings-alert-extension"), message, isError);
   }
 
   static Settings(message, isError = false) {
-    this._showStatus($("#settings-status"), message, isError);
+    this._showAlert($("#settings-alert"), message, isError);
   }
 
-  static _showStatus(statusEl, message, isError = false) {
+  static _showAlert(alertEl, message, isError = false) {
     this._resetAllAlerts();
-    statusEl.innerText = message;
-    statusEl.classList.remove("d-none");
+    alertEl.innerText = message;
+    alertEl.classList.remove("d-none");
     const styleClass = isError ? "danger" : "success";
-    statusEl.classList.add("alert-" + styleClass);
+    alertEl.classList.add("alert-" + styleClass);
   }
 
   static _resetAllAlerts() {
@@ -53,11 +53,11 @@ class ExtensionDataResetOption {
     StorageManager.clear()
       .then(() => {
         $("#settings-form").reset();
-        Status.ExtensionSettings("All extension data cleared.");
+        Alert.ExtensionSettings("All extension data cleared.");
       })
       .catch((err) => {
         console.log(err);
-        Status.ExtensionSettings("Error clearing extension data.", true);
+        Alert.ExtensionSettings("Error clearing extension data.", true);
       });
   }
 }
@@ -123,11 +123,11 @@ class ExtensionSettingsForm {
 
     StorageManager.set({ postBlocklist, subredditBlocklist, hideNsfw })
       .then(() => {
-        Status.Settings("Changes saved.");
+        Alert.Settings("Changes saved.");
       })
       .catch((err) => {
         console.log(err);
-        Status.Settings("Error saving changes.", true);
+        Alert.Settings("Error saving changes.", true);
       });
   }
 

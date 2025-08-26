@@ -1,4 +1,4 @@
-(async function (mode = "purge") {
+(async function () {
   class RegexHelper {
     static fromArray(arr) {
       if (arr.length === 0) return null; // Matches nothing
@@ -143,4 +143,4 @@
       ContentHandler.handleMetrics();
     }
   });
-})("cover");
+})();
