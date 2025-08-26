@@ -25,8 +25,8 @@
      * Reads user-defined settings from storage
      */
     static async init() {
-      let blockListString = (await browser.storage.sync.get("blocklist"))
-        .blocklist;
+      let blockListString = (await browser.storage.sync.get("postBlocklist"))
+        .postBlocklist;
       if (blockListString?.every === undefined) blockListString = [];
 
       const regex = RegexHelper.fromArray(blockListString).source;
@@ -61,15 +61,13 @@
     /**
      * Handles a single post on the page
      * @param {HTMLElement} post
-     * @param {HTMLElement} title
+     * @param {string} title
      * @param {boolean} isNsfw
      * @param {string?} subreddit
      */
     static handlePost(post, title, isNsfw = false, subreddit) {
-      const postTitle = title.textContent;
-      const titleString = " " + postTitle + " ";
+      const titleString = " " + title + " ";
       subreddit = subreddit?.replace("r/", "").trim();
-
       this.resetPost(post);
       if (this.mode === "show") return;
       const titleMatch = titleString.match(this.blocklistRegex) !== null;
@@ -78,7 +76,7 @@
         (isNsfw && this.hideNsfw) || titleMatch || isSubredditBlocked;
       if (!shouldBlock) return;
 
-      console.log(`[RED-IT] Detected post: "${postTitle}"`);
+      console.log(`[RED-IT] Detected post: "${title}"`);
       this.metrics.blockedPosts++;
 
       if (this.mode === "purge") {
@@ -111,10 +109,10 @@
 
     static _handlePosts() {
       for (let post of document.querySelectorAll("#siteTable .thing")) {
-        const titleEl = post.querySelector(".title:last-of-type");
+        const title = post.querySelector(".title a").textContent;
         const isNsfw = post.querySelector(".nsfw-stamp") !== null;
         const subreddit = post.querySelector(".subreddit")?.innerText;
-        ContentHandler.handlePost(post, titleEl, isNsfw, subreddit);
+        ContentHandler.handlePost(post, title.innerText, isNsfw, subreddit);
       }
     }
   }
