@@ -2,6 +2,9 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 Element.prototype.on = Element.prototype.addEventListener;
 
+/**
+ * Wrapper for displaying status messages to the user with a chosen alert element.
+ */
 class Status {
   static ExtensionSettings(message, isError = false) {
     this._showStatus($("#settings-status-extension"), message, isError);
@@ -28,6 +31,9 @@ class Status {
   }
 }
 
+/**
+ * Handles the "Delete Data" button functionality.
+ */
 class ExtensionDataResetOption {
   static init() {
     this.button = $("#reset-data-btn");
@@ -44,9 +50,9 @@ class ExtensionDataResetOption {
   }
 
   static _clearData() {
-    browser.storage.sync
-      .clear()
+    StorageManager.clear()
       .then(() => {
+        $("#settings-form").reset();
         Status.ExtensionSettings("All extension data cleared.");
       })
       .catch((err) => {
@@ -56,65 +62,97 @@ class ExtensionDataResetOption {
   }
 }
 
-function saveChanges(data) {
-  let { postBlocklist, subredditBlocklist, hideNsfw } = data;
-  postBlocklist = postBlocklist
-    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
-    .replaceAll("*", ".*")
-    .split("\n")
-    .map((item) => item.trim());
-  if (typeof postBlocklist === "string") {
-    postBlocklist = [postBlocklist.trim()];
+/**
+ * Handles storage operations using the browser's storage API.
+ * Serves as a wrapper around browser.storage.sync methods.
+ */
+class StorageManager {
+  static set(keyValuePair) {
+    return browser.storage.sync.set(keyValuePair);
   }
 
-  subredditBlocklist = subredditBlocklist
-    .split("\n")
-    .map((item) => item.trim());
-  if (typeof subredditBlocklist === "string") {
-    subredditBlocklist = [subredditBlocklist.trim()];
+  static get(keys) {
+    return browser.storage.sync.get(keys);
   }
 
-  browser.storage.sync
-    .set({ postBlocklist, subredditBlocklist, hideNsfw })
-    .then(() => {
-      Status.Settings("Changes saved.");
-    })
-    .catch((err) => {
-      console.log(err);
-      Status.Settings("Error saving changes.", true);
+  static clear() {
+    return browser.storage.sync.clear();
+  }
+}
+
+/**
+ * Manages the user interaction with the extension settings form,
+ * including loading existing settings into it.
+ */
+class ExtensionSettingsForm {
+  static init() {
+    this.load();
+
+    $("#submit-btn").on("click", function (e) {
+      e.preventDefault();
+      const values = new FormData($("#settings-form"));
+      const postBlocklist = values.get("post-blocklist") ?? "";
+      const hideNsfw = values.get("hide-nsfw-checkbox") === "on";
+      const subredditBlocklist = values.get("subreddit-blocklist") ?? "";
+
+      ExtensionSettingsForm.saveChanges({
+        postBlocklist,
+        subredditBlocklist,
+        hideNsfw,
+      });
     });
+  }
+
+  static saveChanges(data) {
+    let { postBlocklist, subredditBlocklist, hideNsfw } = data;
+    postBlocklist = postBlocklist
+      .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+      .replaceAll("*", ".*")
+      .split("\n")
+      .map((item) => item.trim());
+    if (typeof postBlocklist === "string") {
+      postBlocklist = [postBlocklist.trim()];
+    }
+
+    subredditBlocklist = subredditBlocklist
+      .split("\n")
+      .map((item) => item.trim());
+    if (typeof subredditBlocklist === "string") {
+      subredditBlocklist = [subredditBlocklist.trim()];
+    }
+
+    StorageManager.set({ postBlocklist, subredditBlocklist, hideNsfw })
+      .then(() => {
+        Status.Settings("Changes saved.");
+      })
+      .catch((err) => {
+        console.log(err);
+        Status.Settings("Error saving changes.", true);
+      });
+  }
+
+  static setFormValues(values) {
+    $("#post-blocklist").value = values.postBlocklist
+      .join("\n")
+      .replace(/\\/g, "")
+      .replace(".*", "*");
+    $("#subreddit-blocklist").value = values.subredditBlocklist.join("\n");
+    $("#hide-nsfw-checkbox").checked = values.hideNsfw;
+  }
+
+  static async load() {
+    const datta = await StorageManager.get([
+      "postBlocklist",
+      "hideNsfw",
+      "subredditBlocklist",
+    ]);
+    const postBlocklist = datta.postBlocklist || [];
+    const subredditBlocklist = datta.subredditBlocklist || [];
+    const hideNsfw = datta.hideNsfw || false;
+    this.setFormValues({ postBlocklist, subredditBlocklist, hideNsfw });
+  }
 }
 
-function setFormValues(values) {
-  $("#post-blocklist").value = values.postBlocklist
-    .join("\n")
-    .replace(/\\/g, "")
-    .replace(".*", "*");
-  $("#subreddit-blocklist").value = values.subredditBlocklist.join("\n");
-  $("#hide-nsfw-checkbox").checked = values.hideNsfw;
-}
-
-browser.storage.sync
-  .get(["postBlocklist", "hideNsfw", "subredditBlocklist"])
-  .then((res) => {
-    console.log(res);
-    const postBlocklist = res.postBlocklist || [];
-    const subredditBlocklist = res.subredditBlocklist || [];
-    const hideNsfw = res.hideNsfw || false;
-    setFormValues({ postBlocklist, subredditBlocklist, hideNsfw });
-  });
-
-$("#submit-btn").on("click", function (e) {
-  e.preventDefault();
-  const postBlocklist = $("#post-blocklist").value;
-  const hideNsfw = $("#hide-nsfw-checkbox").checked;
-  const subredditBlocklist = $("#subreddit-blocklist").value;
-
-  saveChanges({
-    postBlocklist,
-    subredditBlocklist,
-    hideNsfw,
-  });
-});
-
+// Main execution
+ExtensionSettingsForm.init();
 ExtensionDataResetOption.init();

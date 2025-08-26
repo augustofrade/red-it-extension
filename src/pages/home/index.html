@@ -23,11 +23,11 @@
   <body style="background-color: #eee">
     <div class="container">
       <main>
-        <h1 class="mt-4">
+        <h1>
           <img src="/icons/icon.png" alt="Logo" />
           Red-It Settings
         </h1>
-        <form class="mt-4 mb-5">
+        <form class="mt-4 mb-5" id="settings-form">
           <div class="mb-4">
             <h2>General</h2>
             <hr />
@@ -46,8 +46,8 @@
                   <input
                     class="form-check-input"
                     type="checkbox"
-                    value=""
                     id="hide-nsfw-checkbox"
+                    name="hide-nsfw-checkbox"
                   />
                   <label class="form-check-label" for="hide-nsfw-checkbox">
                     Block NSFW posts
@@ -69,6 +69,7 @@
                 <textarea
                   class="form-control"
                   id="post-blocklist"
+                  name="post-blocklist"
                   rows="8"
                 ></textarea>
               </section>
@@ -86,6 +87,7 @@
                 <textarea
                   class="form-control"
                   id="subreddit-blocklist"
+                  name="subreddit-blocklist"
                   rows="8"
                 ></textarea>
               </section>
