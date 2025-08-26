@@ -13,6 +13,7 @@
   class ContentHandler {
     static blocklistRegex = "";
     static hideNsfw = false;
+    static blockedSubreddits = [];
 
     static mode = "hide";
     static originalTitle = document.title;
@@ -38,6 +39,14 @@
 
       this.hideNsfw = (await browser.storage.sync.get("hideNsfw")).hideNsfw;
       console.info("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
+
+      this.blockedSubreddits = (
+        await browser.storage.sync.get("subredditBlocklist")
+      ).subredditBlocklist;
+      console.info(
+        "[RED-IT] Blocked subreddits:",
+        this.blockedSubreddits.join(", ") || "None"
+      );
     }
 
     static async handleMetrics() {
@@ -53,15 +62,20 @@
      * Handles a single post on the page
      * @param {HTMLElement} post
      * @param {HTMLElement} title
+     * @param {boolean} isNsfw
+     * @param {string?} subreddit
      */
-    static handlePost(post, title, isNsfw = false) {
+    static handlePost(post, title, isNsfw = false, subreddit) {
       const postTitle = title.textContent;
       const titleString = " " + postTitle + " ";
+      subreddit = subreddit?.replace("r/", "").trim();
 
       this.resetPost(post);
       if (this.mode === "show") return;
-      const validMatch = titleString.match(this.blocklistRegex) !== null;
-      const shouldBlock = (isNsfw && this.hideNsfw) || validMatch;
+      const titleMatch = titleString.match(this.blocklistRegex) !== null;
+      const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
+      const shouldBlock =
+        (isNsfw && this.hideNsfw) || titleMatch || isSubredditBlocked;
       if (!shouldBlock) return;
 
       console.log(`[RED-IT] Detected post: "${postTitle}"`);
@@ -99,16 +113,11 @@
       for (let post of document.querySelectorAll("#siteTable .thing")) {
         const titleEl = post.querySelector(".title:last-of-type");
         const isNsfw = post.querySelector(".nsfw-stamp") !== null;
-        ContentHandler.handlePost(post, titleEl, isNsfw);
+        const subreddit = post.querySelector(".subreddit")?.innerText;
+        ContentHandler.handlePost(post, titleEl, isNsfw, subreddit);
       }
     }
   }
-
-  // let detectedPosts = 0;
-  // console.log("Running Red-It in mode:", mode);
-
-  // console.log(`${detectedPosts} hidden posts.`);
-  // document.title = `(${detectedPosts}) ${document.title}`;
 
   let site;
   await ContentHandler.init();
@@ -125,6 +134,4 @@
       ContentHandler.handleMetrics();
     }
   });
-
-  return detectedPosts;
 })("cover");

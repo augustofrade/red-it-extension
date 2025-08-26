@@ -11,14 +11,25 @@ function showStatus(message, isError = false) {
 }
 
 function saveChanges(data) {
-  let blocklist = data.blocklist
+  let { postBlocklist, subredditBlocklist, hideNsfw } = data;
+  postBlocklist = postBlocklist
     .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
-    .replaceAll("*", ".*");
+    .replaceAll("*", ".*")
+    .split("\n")
+    .map((item) => item.trim());
+  if (typeof postBlocklist === "string") {
+    postBlocklist = [postBlocklist.trim()];
+  }
 
-  blocklist = blocklist.split("\n").map((item) => item.trim());
+  subredditBlocklist = subredditBlocklist
+    .split("\n")
+    .map((item) => item.trim());
+  if (typeof subredditBlocklist === "string") {
+    subredditBlocklist = [subredditBlocklist.trim()];
+  }
 
   browser.storage.sync
-    .set({ blocklist, hideNsfw: data.hideNsfw })
+    .set({ postBlocklist, subredditBlocklist, hideNsfw })
     .then(() => {
       showStatus("Changes saved.");
     })
@@ -28,25 +39,34 @@ function saveChanges(data) {
     });
 }
 
-function setValues(values) {
-  $("#blocklist").value = values.blocklist
+function setFormValues(values) {
+  $("#post-blocklist").value = values.postBlocklist
     .join("\n")
     .replace(/\\/g, "")
     .replace(".*", "*");
+  $("#subreddit-blocklist").value = values.subredditBlocklist.join("\n");
+  $("#hide-nsfw-checkbox").checked = values.hideNsfw;
 }
 
-browser.storage.sync.get("blocklist").then((res) => {
-  const blocklist = res.blocklist || [];
-  setValues({ blocklist });
-});
+browser.storage.sync
+  .get(["postBlocklist", "hideNsfw", "subredditBlocklist"])
+  .then((res) => {
+    console.log(res);
+    const postBlocklist = res.postBlocklist || [];
+    const subredditBlocklist = res.subredditBlocklist || [];
+    const hideNsfw = res.hideNsfw || false;
+    setFormValues({ postBlocklist, subredditBlocklist, hideNsfw });
+  });
 
 $("#submit-btn").on("click", function (e) {
   e.preventDefault();
-  const rawList = $("#blocklist").value;
+  const postBlocklist = $("#post-blocklist").value;
   const hideNsfw = $("#hide-nsfw-checkbox").checked;
+  const subredditBlocklist = $("#subreddit-blocklist").value;
 
   saveChanges({
-    blocklist: rawList,
+    postBlocklist,
+    subredditBlocklist,
     hideNsfw,
   });
 });
