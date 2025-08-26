@@ -2,13 +2,19 @@
   "manifest_version": 2,
   "name": "Red-It",
   "version": "0.2",
+  "author": "Augusto Frade",
+  "homepage_url": "https://github.com/augustofrade/red-it-extension",
+  "developer": {
+    "name": "Augusto Frade",
+    "url": "https://github.com/augustofrade"
+  },
 
   "icons": {
     "32": "icons/icon.png",
     "64": "icons/icon@2x.png"
   },
 
-  "description": "Block content on Reddit based on its content",
+  "description": "Block posts on Reddit based on its content",
 
   "content_scripts": [
     {
