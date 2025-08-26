@@ -1,12 +1,18 @@
 (async function (mode = "purge") {
   class RegexHelper {
     static fromArray(arr) {
+      if (arr.length === 0) return null; // Matches nothing
       const wordBoundaryChars = "[ ,.?!;:\"'()\\[\\]{}<>‘’]";
       const str = arr.join("|");
       return new RegExp(
         wordBoundaryChars + "(" + str + ")" + wordBoundaryChars,
         "gi"
       );
+    }
+
+    static hasMatches(regex, str) {
+      if (regex === null) return false;
+      return str.match(regex) !== null;
     }
   }
 
@@ -29,9 +35,9 @@
         .postBlocklist;
       if (blockListString?.every === undefined) blockListString = [];
 
-      const regex = RegexHelper.fromArray(blockListString).source;
-
-      this.blocklistRegex = new RegExp(regex, "gi");
+      const regex = RegexHelper.fromArray(blockListString);
+      this.blocklistRegex =
+        regex === null ? null : new RegExp(regex.source, "gi");
       console.info("[RED-IT] Loaded blocklist");
 
       this.mode = await browser.runtime.sendMessage("get-mode");
@@ -40,9 +46,9 @@
       this.hideNsfw = (await browser.storage.sync.get("hideNsfw")).hideNsfw;
       console.info("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
 
-      this.blockedSubreddits = (
-        await browser.storage.sync.get("subredditBlocklist")
-      ).subredditBlocklist;
+      this.blockedSubreddits =
+        (await browser.storage.sync.get("subredditBlocklist"))
+          .subredditBlocklist ?? [];
       console.info(
         "[RED-IT] Blocked subreddits:",
         this.blockedSubreddits.join(", ") || "None"
@@ -72,7 +78,10 @@
       this.resetPost(post);
       if (this.mode === "show") return;
 
-      const titleMatch = titleString.match(this.blocklistRegex) !== null;
+      const titleMatch = RegexHelper.hasMatches(
+        this.blocklistRegex,
+        titleString
+      );
       const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
       const shouldBlock =
         (isNsfw && this.hideNsfw) || titleMatch || isSubredditBlocked;
