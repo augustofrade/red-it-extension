@@ -2,12 +2,21 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 Element.prototype.on = Element.prototype.addEventListener;
 
-function showStatus(message, isError = false) {
-  const statusEl = $("#status");
-  statusEl.innerText = message;
-  statusEl.classList.remove("d-none");
-  const styleClass = isError ? "danger" : "success";
-  statusEl.classList.add("alert-" + styleClass);
+class Status {
+  static ExtensionSettings(message, isError = false) {
+    this._showStatus($("#settings-status-extension"), message, isError);
+  }
+
+  static Settings(message, isError = false) {
+    this._showStatus($("#settings-status"), message, isError);
+  }
+
+  static _showStatus(statusEl, message, isError = false) {
+    statusEl.innerText = message;
+    statusEl.classList.remove("d-none");
+    const styleClass = isError ? "danger" : "success";
+    statusEl.classList.add("alert-" + styleClass);
+  }
 }
 
 function saveChanges(data) {
@@ -31,11 +40,11 @@ function saveChanges(data) {
   browser.storage.sync
     .set({ postBlocklist, subredditBlocklist, hideNsfw })
     .then(() => {
-      showStatus("Changes saved.");
+      Status.Settings("Changes saved.");
     })
     .catch((err) => {
       console.log(err);
-      showStatus("Error saving changes.", true);
+      Status.Settings("Error saving changes.", true);
     });
 }
 

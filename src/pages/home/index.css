@@ -1,0 +1,11 @@
+* {
+  font-family: "Open Sans", sans-serif;
+}
+
+main {
+  margin-top: 80px;
+  margin-bottom: 200px;
+  border-radius: 12px;
+  padding: 100px 40px;
+  background-color: white;
+}
