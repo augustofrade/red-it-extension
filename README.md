@@ -5,15 +5,13 @@
 </p>
 
 <p align="center">
-  <strong>Block content on Reddit based on its content</strong>
+  <strong>Block posts on Reddit based on its content</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Firefox-Compatible-orange?style=flat-square&logo=firefox" alt="Firefox Compatible">
   <img src="https://img.shields.io/badge/Version-0.2-blue?style=flat-square" alt="Version">
 </p>
-
-## 📖 Description
 
 Red-It is a Firefox extension designed to enhance the your Reddit browsing experience by allowing you to block unwanted posts based on keywords. Take control of your Reddit feed and filter out posts that contain specific words, phrases and simple patterns you'd rather not see.
 
@@ -89,6 +87,11 @@ Found a bug or have a feature request? Please [open an issue](https://github.com
 - Steps to reproduce (for bugs)
 - Expected vs actual behavior
 - Screenshots if applicable
+
+## ℹ️ About
+
+The extension is called "red-it" because the posts were initially hidden by a red rectangle instead of a white or gray one.
+Even after changing the colors, I liked that the name resembles the target website and also sounds like it blocks its content.
 
 ## 📄 License
 
