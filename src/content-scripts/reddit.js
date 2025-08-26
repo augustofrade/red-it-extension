@@ -12,6 +12,8 @@
 
   class ContentHandler {
     static blocklistRegex = "";
+    static hideNsfw = false;
+
     static mode = "hide";
     static originalTitle = document.title;
     static metrics = {
@@ -33,6 +35,9 @@
 
       this.mode = await browser.runtime.sendMessage("get-mode");
       console.info("[RED-IT] Using mode:", this.mode);
+
+      this.hideNsfw = (await browser.storage.sync.get("hideNsfw")).hideNsfw;
+      console.info("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
     }
 
     static async handleMetrics() {
@@ -49,15 +54,15 @@
      * @param {HTMLElement} post
      * @param {HTMLElement} title
      */
-    static handlePost(post, title) {
+    static handlePost(post, title, isNsfw = false) {
       const postTitle = title.textContent;
       const titleString = " " + postTitle + " ";
 
-      if (titleString.match(this.blocklistRegex) === null) return;
-
       this.resetPost(post);
-
       if (this.mode === "show") return;
+      const validMatch = titleString.match(this.blocklistRegex) !== null;
+      const shouldBlock = (isNsfw && this.hideNsfw) || validMatch;
+      if (!shouldBlock) return;
 
       console.log(`[RED-IT] Detected post: "${postTitle}"`);
       this.metrics.blockedPosts++;
@@ -93,7 +98,8 @@
     static _handlePosts() {
       for (let post of document.querySelectorAll("#siteTable .thing")) {
         const titleEl = post.querySelector(".title:last-of-type");
-        ContentHandler.handlePost(post, titleEl);
+        const isNsfw = post.querySelector(".nsfw-stamp") !== null;
+        ContentHandler.handlePost(post, titleEl, isNsfw);
       }
     }
   }

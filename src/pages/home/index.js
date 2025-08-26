@@ -10,13 +10,15 @@ function showStatus(message, isError = false) {
   statusEl.classList.add("alert-" + styleClass);
 }
 
-function saveChanges(rawList) {
-  rawList = rawList.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replaceAll("*", ".*");
+function saveChanges(data) {
+  let blocklist = data.blocklist
+    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+    .replaceAll("*", ".*");
 
-  const list = rawList.split("\n").map((item) => item.trim());
+  blocklist = blocklist.split("\n").map((item) => item.trim());
 
   browser.storage.sync
-    .set({ blocklist: list })
+    .set({ blocklist, hideNsfw: data.hideNsfw })
     .then(() => {
       showStatus("Changes saved.");
     })
@@ -41,5 +43,10 @@ browser.storage.sync.get("blocklist").then((res) => {
 $("#submit-btn").on("click", function (e) {
   e.preventDefault();
   const rawList = $("#blocklist").value;
-  saveChanges(rawList);
+  const hideNsfw = $("#hide-nsfw-checkbox").checked;
+
+  saveChanges({
+    blocklist: rawList,
+    hideNsfw,
+  });
 });
