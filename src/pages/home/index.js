@@ -6,6 +6,8 @@ Element.prototype.on = Element.prototype.addEventListener;
  * Wrapper for displaying alert messages to the user with a chosen alert element.
  */
 class Alert {
+  timeout = null;
+
   static ExtensionSettings(message, isError = false) {
     this._showAlert($("#settings-alert-extension"), message, isError);
   }
@@ -18,8 +20,17 @@ class Alert {
     this._resetAllAlerts();
     alertEl.innerText = message;
     alertEl.classList.remove("d-none");
-    const styleClass = isError ? "danger" : "success";
-    alertEl.classList.add("alert-" + styleClass);
+    const styleClass = isError ? "alert-danger" : "alert-success";
+    alertEl.classList.add(styleClass);
+
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    this.timeout = setTimeout(() => {
+      alertEl.classList.add("d-none");
+      alertEl.classList.remove(styleClass);
+    }, 2500);
   }
 
   static _resetAllAlerts() {
@@ -105,20 +116,22 @@ class ExtensionSettingsForm {
 
   static saveChanges(data) {
     let { postBlocklist, subredditBlocklist, hideNsfw } = data;
-    postBlocklist = postBlocklist
-      .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
-      .replaceAll("*", ".*")
-      .split("\n")
-      .map((item) => item.trim());
-    if (typeof postBlocklist === "string") {
-      postBlocklist = [postBlocklist.trim()];
+    if (postBlocklist.trim().length === 0) {
+      postBlocklist = [];
+    } else {
+      postBlocklist = postBlocklist
+        .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+        .replaceAll("*", ".*")
+        .split("\n")
+        .map((item) => item.trim());
     }
 
-    subredditBlocklist = subredditBlocklist
-      .split("\n")
-      .map((item) => item.trim());
-    if (typeof subredditBlocklist === "string") {
-      subredditBlocklist = [subredditBlocklist.trim()];
+    if (subredditBlocklist.trim().length === 0) {
+      subredditBlocklist = [];
+    } else {
+      subredditBlocklist = subredditBlocklist
+        .split("\n")
+        .map((item) => item.trim());
     }
 
     StorageManager.set({ postBlocklist, subredditBlocklist, hideNsfw })
