@@ -3,9 +3,88 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+
+    <meta name="description" content="Red-It - Blocked Subreddit" />
+    <link rel="icon" type="image/png" href="/icons/icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Red-It Blocked Subreddit</title>
   </head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    body {
+      background-color: #eee;
+    }
+
+    main {
+      padding: 140px 12px;
+    }
+
+    .block-img {
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 24px;
+    }
+
+    .description {
+      text-align: center;
+    }
+
+    #settings-anchor {
+      color: #000;
+      text-decoration: none;
+      border-bottom: 2px solid #000;
+    }
+
+    .extension-name {
+      font-weight: 600;
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .extension-name::before {
+      content: "";
+      background-image: url(/icons/icon.png);
+      position: absolute;
+      background-size: contain;
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      left: 0;
+      transform: translateY(3px);
+    }
+  </style>
   <body>
-    This subreddit has been blocked by Red-It.
+    <main>
+      <div class="description">
+        <img src="/icons/icon@2x.png" alt="Blocked" class="block-img" />
+        <h1></h1>
+        <p>
+          This subreddit is in your blocklist.<br />To unblock it, go to the
+          <a href="#" id="settings-anchor">
+            <span class="extension-name"> Red-It </span>
+            settings
+          </a>
+        </p>
+      </div>
+    </main>
   </body>
+
+  <script src="./index.js"></script>
 </html>
