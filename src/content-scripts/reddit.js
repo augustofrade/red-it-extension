@@ -65,33 +65,43 @@
      */
     static handlePost(post, title, isNsfw = false, subreddit) {
       const titleString = " " + title + " ";
-      subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
 
       this._resetPost(post);
       if (this.mode === "show") return;
 
       const titleMatch = RegexHelper.hasMatches(this.blocklistRegex, titleString);
-      const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
-      const shouldBlock = (isNsfw && this.hideNsfw) || titleMatch || isSubredditBlocked;
+      const shouldBlock =
+        (isNsfw && this.hideNsfw) || titleMatch || this.isSubredditBlocked(subreddit);
       if (!shouldBlock) return;
 
       console.log(`[RED-IT] Detected post: "${title}"`);
       this.metrics.blockedPosts++;
-      this._blockContent(post);
+      this.blockContent(post);
     }
 
     static handleSearchResultSubreddit(post, subreddit) {
-      subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
-
       this._resetPost(post);
       if (this.mode === "show") return;
-
-      const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
-      if (!isSubredditBlocked) return;
+      if (!this.isSubredditBlocked(subreddit)) return;
 
       console.log(`[RED-IT] Detected subreddit: "r/${subreddit}"`);
       this.metrics.blockedSubreddits++;
-      this._blockContent(post);
+      this.blockContent(post);
+    }
+
+    static isSubredditBlocked(subreddit) {
+      subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
+      return this.blockedSubreddits.includes(subreddit);
+    }
+
+    static blockContent(content) {
+      if (this.mode === "purge") {
+        content.style.display = "none";
+      } else if (this.mode === "cover") {
+        content.classList.add("red-it--blocked-content");
+      } else if (this.mode === "hide") {
+        content.style.visibility = "hidden";
+      }
     }
 
     /**
@@ -103,16 +113,6 @@
       post.classList.remove("red-it--blocked-content");
       post.style.visibility = "initial";
     }
-
-    static _blockContent(content) {
-      if (this.mode === "purge") {
-        content.style.display = "none";
-      } else if (this.mode === "cover") {
-        content.classList.add("red-it--blocked-content");
-      } else if (this.mode === "hide") {
-        content.style.visibility = "hidden";
-      }
-    }
   }
 
   class OldReddit {
@@ -123,6 +123,7 @@
       this._handlePosts();
       this._handleSearchPagePosts();
       this._handleSearchPageSubreddits();
+      this._handleTopBarSubreddits();
     }
 
     static _handlePosts() {
@@ -147,6 +148,16 @@
         const isNsfw = post.querySelector(".nsfw-stamp") !== null;
         const subreddit = post.querySelector(".search-subreddit-link").textContent;
         ContentHandler.handlePost(post, title, isNsfw, subreddit);
+      }
+    }
+
+    static _handleTopBarSubreddits() {
+      const list = document.getElementById("sr-bar");
+      for (let item of list.querySelectorAll(".choice")) {
+        const subreddit = item.textContent;
+        if (ContentHandler.isSubredditBlocked(subreddit)) {
+          list.removeChild(item.parentElement);
+        }
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Red-It",
-  "version": "0.3",
+  "version": "0.3.1",
   "author": "Augusto Frade",
   "homepage_url": "https://github.com/augustofrade/red-it-extension",
   "developer": {
@@ -24,13 +24,7 @@
     }
   ],
 
-  "permissions": [
-    "tabs",
-    "storage",
-    "webRequest",
-    "webRequestBlocking",
-    "*://*.reddit.com/*"
-  ],
+  "permissions": ["tabs", "storage", "webRequest", "webRequestBlocking", "*://*.reddit.com/*"],
 
   "browser_action": {
     "default_title": "Red-It",
