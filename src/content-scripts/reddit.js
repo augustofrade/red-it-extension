@@ -67,7 +67,7 @@
       const titleString = " " + title + " ";
       subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
 
-      this.resetPost(post);
+      this._resetPost(post);
       if (this.mode === "show") return;
 
       const titleMatch = RegexHelper.hasMatches(this.blocklistRegex, titleString);
@@ -77,20 +77,13 @@
 
       console.log(`[RED-IT] Detected post: "${title}"`);
       this.metrics.blockedPosts++;
-
-      if (this.mode === "purge") {
-        post.style.display = "none";
-      } else if (this.mode === "cover") {
-        post.classList.add("unwanted-post");
-      } else if (this.mode === "hide") {
-        post.style.visibility = "hidden";
-      }
+      this._blockContent(post);
     }
 
     static handleSearchResultSubreddit(post, subreddit) {
       subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
 
-      this.resetPost(post);
+      this._resetPost(post);
       if (this.mode === "show") return;
 
       const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
@@ -98,24 +91,27 @@
 
       console.log(`[RED-IT] Detected subreddit: "r/${subreddit}"`);
       this.metrics.blockedSubreddits++;
-
-      if (this.mode === "purge") {
-        post.style.display = "none";
-      } else if (this.mode === "cover") {
-        post.classList.add("unwanted-post");
-      } else if (this.mode === "hide") {
-        post.style.visibility = "hidden";
-      }
+      this._blockContent(post);
     }
 
     /**
      * Resets the styles of a post element
      * @param {HTMLElement} post
      */
-    static resetPost(post) {
+    static _resetPost(post) {
       post.style.display = "block";
-      post.classList.remove("unwanted-post");
+      post.classList.remove("red-it--blocked-content");
       post.style.visibility = "initial";
+    }
+
+    static _blockContent(content) {
+      if (this.mode === "purge") {
+        content.style.display = "none";
+      } else if (this.mode === "cover") {
+        content.classList.add("red-it--blocked-content");
+      } else if (this.mode === "hide") {
+        content.style.visibility = "hidden";
+      }
     }
   }
 
