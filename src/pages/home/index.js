@@ -16,6 +16,10 @@ class Alert {
     this._showAlert($("#settings-alert"), message, isError);
   }
 
+  static OldRedditSettings(message, isError = false) {
+    this._showAlert($("#settings-alert--old-reddit"), message, isError);
+  }
+
   static _showAlert(alertEl, message, isError = false) {
     this._resetAllAlerts();
     alertEl.innerText = message;
@@ -63,7 +67,7 @@ class ExtensionDataResetOption {
   static _clearData() {
     StorageManager.clear()
       .then(() => {
-        $("#settings-form").reset();
+        $("#general-settings-form").reset();
         Alert.ExtensionSettings("All extension data cleared.");
       })
       .catch((err) => {
@@ -95,18 +99,18 @@ class StorageManager {
  * Manages the user interaction with the extension settings form,
  * including loading existing settings into it.
  */
-class ExtensionSettingsForm {
+class GeneralSettingsForm {
   static init() {
-    this.load();
+    this._load();
 
-    $("#submit-btn").on("click", function (e) {
+    $("#submit-btn--general").on("click", function (e) {
       e.preventDefault();
-      const values = new FormData($("#settings-form"));
+      const values = new FormData($("#general-settings-form"));
       const postBlocklist = values.get("post-blocklist") ?? "";
       const hideNsfw = values.get("hide-nsfw-checkbox") === "on";
       const subredditBlocklist = values.get("subreddit-blocklist") ?? "";
 
-      ExtensionSettingsForm.saveChanges({
+      GeneralSettingsForm.saveChanges({
         postBlocklist,
         subredditBlocklist,
         hideNsfw,
@@ -151,15 +155,57 @@ class ExtensionSettingsForm {
     $("#hide-nsfw-checkbox").checked = values.hideNsfw;
   }
 
-  static async load() {
-    const datta = await StorageManager.get(["postBlocklist", "hideNsfw", "subredditBlocklist"]);
-    const postBlocklist = datta.postBlocklist || [];
-    const subredditBlocklist = datta.subredditBlocklist || [];
-    const hideNsfw = datta.hideNsfw || false;
+  static async _load() {
+    const data = await StorageManager.get(["postBlocklist", "hideNsfw", "subredditBlocklist"]);
+    const postBlocklist = data.postBlocklist || [];
+    const subredditBlocklist = data.subredditBlocklist || [];
+    const hideNsfw = data.hideNsfw || false;
     this.setFormValues({ postBlocklist, subredditBlocklist, hideNsfw });
   }
 }
 
+class OldRedditSettingsForm {
+  static init() {
+    this._load();
+
+    $("#submit-btn--old-reddit").on("click", function (e) {
+      e.preventDefault();
+      const values = new FormData($("#old-reddit-settings-form"));
+      const hidePremiumAd = values.get("old-reddit--hide-premium-ad") === "on";
+
+      OldRedditSettingsForm.saveChanges({ hidePremiumAd });
+    });
+  }
+
+  static saveChanges(data) {
+    StorageManager.set({
+      oldReddit: {
+        hidePremiumAd: data.hidePremiumAd,
+      },
+    })
+      .then(() => {
+        Alert.OldRedditSettings("Changes saved.");
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.OldRedditSettings("Error saving changes.", true);
+      });
+  }
+
+  static setFormValues(values) {
+    $("#old-reddit--hide-premium-ad").checked = values.hidePremiumAd;
+  }
+
+  static async _load() {
+    const result = await StorageManager.get("oldReddit");
+    const { oldReddit: data } = result;
+
+    const hidePremiumAd = data.hidePremiumAd ?? false;
+    this.setFormValues({ hidePremiumAd });
+  }
+}
+
 // Main execution
-ExtensionSettingsForm.init();
+GeneralSettingsForm.init();
 ExtensionDataResetOption.init();
+OldRedditSettingsForm.init();
