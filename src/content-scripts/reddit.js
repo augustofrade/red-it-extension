@@ -25,6 +25,7 @@
     static originalTitle = document.title;
     static metrics = {
       blockedPosts: 0,
+      blockedSubreddits: 0,
     };
 
     /**
@@ -57,6 +58,9 @@
 
     static async handleMetrics() {
       console.log(`[RED-IT] Blocked ${this.metrics.blockedPosts} posts.`);
+      console.log(
+        `[RED-IT] Blocked ${this.metrics.blockedSubreddits} subreddits.`
+      );
       if (this.metrics.blockedPosts == 0)
         return (document.title = this.originalTitle);
 
@@ -73,7 +77,7 @@
      */
     static handlePost(post, title, isNsfw = false, subreddit) {
       const titleString = " " + title + " ";
-      subreddit = subreddit?.replace("r/", "").trim();
+      subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
 
       this.resetPost(post);
       if (this.mode === "show") return;
@@ -89,6 +93,27 @@
 
       console.log(`[RED-IT] Detected post: "${title}"`);
       this.metrics.blockedPosts++;
+
+      if (this.mode === "purge") {
+        post.style.display = "none";
+      } else if (this.mode === "cover") {
+        post.classList.add("unwanted-post");
+      } else if (this.mode === "hide") {
+        post.style.visibility = "hidden";
+      }
+    }
+
+    static handleSearchResultSubreddit(post, subreddit) {
+      subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
+
+      this.resetPost(post);
+      if (this.mode === "show") return;
+
+      const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
+      if (!isSubredditBlocked) return;
+
+      console.log(`[RED-IT] Detected subreddit: "r/${subreddit}"`);
+      this.metrics.blockedSubreddits++;
 
       if (this.mode === "purge") {
         post.style.display = "none";
@@ -116,6 +141,8 @@
     static handle() {
       console.log("[RED-IT] Handling posts for " + this.hostname);
       this._handlePosts();
+      this._handleSearchPagePosts();
+      this._handleSearchPageSubreddits();
     }
 
     static _handlePosts() {
@@ -123,6 +150,28 @@
         const title = post.querySelector(".title a").textContent;
         const isNsfw = post.querySelector(".nsfw-stamp") !== null;
         const subreddit = post.querySelector(".subreddit")?.innerText;
+        ContentHandler.handlePost(post, title, isNsfw, subreddit);
+      }
+    }
+
+    static _handleSearchPageSubreddits() {
+      for (let result of document.querySelectorAll(
+        ".search-result-subreddit"
+      )) {
+        const subreddit = result.querySelector(
+          ".search-subreddit-link"
+        ).textContent;
+        ContentHandler.handleSearchResultSubreddit(result, subreddit);
+      }
+    }
+
+    static _handleSearchPagePosts() {
+      for (let post of document.querySelectorAll(".search-result-link")) {
+        const title = post.querySelector(".search-title").textContent;
+        const isNsfw = post.querySelector(".nsfw-stamp") !== null;
+        const subreddit = post.querySelector(
+          ".search-subreddit-link"
+        ).textContent;
         ContentHandler.handlePost(post, title, isNsfw, subreddit);
       }
     }
