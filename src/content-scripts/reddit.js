@@ -117,13 +117,21 @@
 
   class OldReddit {
     static hostname = "old.reddit.com";
+    static _configs = {};
 
-    static handle() {
+    static async handle() {
       console.log("[RED-IT] Handling posts for " + this.hostname);
+      await this._loadConfigs();
       this._handlePosts();
       this._handleSearchPagePosts();
       this._handleSearchPageSubreddits();
       this._handleTopBarSubreddits();
+      this._hidePremiumAd();
+    }
+
+    static async _loadConfigs() {
+      const configs = (await browser.storage.sync.get("oldReddit")).oldReddit;
+      this._configs._hidePremiumAd = configs?.hidePremiumAd ?? false;
     }
 
     static _handlePosts() {
@@ -160,6 +168,13 @@
         }
       }
     }
+
+    static _hidePremiumAd() {
+      const banner = document.querySelector(".premium-banner-outer");
+      if (banner) {
+        banner.parentElement.removeChild(banner);
+      }
+    }
   }
 
   let site;
@@ -167,7 +182,7 @@
   if (location.hostname === OldReddit.hostname) {
     site = OldReddit;
   }
-  site.handle();
+  await site.handle();
   ContentHandler.handleMetrics();
 
   browser.runtime.onMessage.addListener(function (message) {
