@@ -10,9 +10,7 @@ browser.storage.sync.get("subredditBlocklist").then((data) => {
 
 browser.storage.onChanged.addListener((changes, area) => {
   if (area === "sync" && changes.subredditBlocklist) {
-    blockedSubreddits = normalizeSubredditList(
-      changes.subredditBlocklist.newValue
-    );
+    blockedSubreddits = normalizeSubredditList(changes.subredditBlocklist.newValue);
   }
 });
 

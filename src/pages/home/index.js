@@ -129,9 +129,7 @@ class ExtensionSettingsForm {
     if (subredditBlocklist.trim().length === 0) {
       subredditBlocklist = [];
     } else {
-      subredditBlocklist = subredditBlocklist
-        .split("\n")
-        .map((item) => item.trim());
+      subredditBlocklist = subredditBlocklist.split("\n").map((item) => item.trim());
     }
 
     StorageManager.set({ postBlocklist, subredditBlocklist, hideNsfw })
@@ -154,11 +152,7 @@ class ExtensionSettingsForm {
   }
 
   static async load() {
-    const datta = await StorageManager.get([
-      "postBlocklist",
-      "hideNsfw",
-      "subredditBlocklist",
-    ]);
+    const datta = await StorageManager.get(["postBlocklist", "hideNsfw", "subredditBlocklist"]);
     const postBlocklist = datta.postBlocklist || [];
     const subredditBlocklist = datta.subredditBlocklist || [];
     const hideNsfw = datta.hideNsfw || false;

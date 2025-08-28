@@ -5,10 +5,7 @@ function handleMessages(messages) {
     console.log("Received message:", message);
 
     for (const [key, handler] of messageList) {
-      if (
-        (typeof message === "string" && message === key) ||
-        message.type === key
-      ) {
+      if ((typeof message === "string" && message === key) || message.type === key) {
         return handler(message, sender, sendResponse);
       }
     }

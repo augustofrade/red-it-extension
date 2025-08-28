@@ -4,10 +4,7 @@
       if (arr.length === 0) return null; // Matches nothing
       const wordBoundaryChars = "[ ,.?!;:\"'()\\[\\]{}<>‘’]";
       const str = arr.join("|");
-      return new RegExp(
-        wordBoundaryChars + "(" + str + ")" + wordBoundaryChars,
-        "gi"
-      );
+      return new RegExp(wordBoundaryChars + "(" + str + ")" + wordBoundaryChars, "gi");
     }
 
     static hasMatches(regex, str) {
@@ -32,13 +29,11 @@
      * Reads user-defined settings from storage
      */
     static async init() {
-      let blockListString = (await browser.storage.sync.get("postBlocklist"))
-        .postBlocklist;
+      let blockListString = (await browser.storage.sync.get("postBlocklist")).postBlocklist;
       if (blockListString?.every === undefined) blockListString = [];
 
       const regex = RegexHelper.fromArray(blockListString);
-      this.blocklistRegex =
-        regex === null ? null : new RegExp(regex.source, "gi");
+      this.blocklistRegex = regex === null ? null : new RegExp(regex.source, "gi");
       console.info("[RED-IT] Loaded blocklist");
 
       this.mode = await browser.runtime.sendMessage("get-mode");
@@ -48,21 +43,14 @@
       console.info("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
 
       this.blockedSubreddits =
-        (await browser.storage.sync.get("subredditBlocklist"))
-          .subredditBlocklist ?? [];
-      console.info(
-        "[RED-IT] Blocked subreddits:",
-        this.blockedSubreddits.join(", ") || "None"
-      );
+        (await browser.storage.sync.get("subredditBlocklist")).subredditBlocklist ?? [];
+      console.info("[RED-IT] Blocked subreddits:", this.blockedSubreddits.join(", ") || "None");
     }
 
     static async handleMetrics() {
       console.log(`[RED-IT] Blocked ${this.metrics.blockedPosts} posts.`);
-      console.log(
-        `[RED-IT] Blocked ${this.metrics.blockedSubreddits} subreddits.`
-      );
-      if (this.metrics.blockedPosts == 0)
-        return (document.title = this.originalTitle);
+      console.log(`[RED-IT] Blocked ${this.metrics.blockedSubreddits} subreddits.`);
+      if (this.metrics.blockedPosts == 0) return (document.title = this.originalTitle);
 
       document.title = `(${this.metrics.blockedPosts}) ${this.originalTitle}`;
       this.metrics.blockedPosts = 0;
@@ -82,13 +70,9 @@
       this.resetPost(post);
       if (this.mode === "show") return;
 
-      const titleMatch = RegexHelper.hasMatches(
-        this.blocklistRegex,
-        titleString
-      );
+      const titleMatch = RegexHelper.hasMatches(this.blocklistRegex, titleString);
       const isSubredditBlocked = this.blockedSubreddits.includes(subreddit);
-      const shouldBlock =
-        (isNsfw && this.hideNsfw) || titleMatch || isSubredditBlocked;
+      const shouldBlock = (isNsfw && this.hideNsfw) || titleMatch || isSubredditBlocked;
       if (!shouldBlock) return;
 
       console.log(`[RED-IT] Detected post: "${title}"`);
@@ -155,12 +139,8 @@
     }
 
     static _handleSearchPageSubreddits() {
-      for (let result of document.querySelectorAll(
-        ".search-result-subreddit"
-      )) {
-        const subreddit = result.querySelector(
-          ".search-subreddit-link"
-        ).textContent;
+      for (let result of document.querySelectorAll(".search-result-subreddit")) {
+        const subreddit = result.querySelector(".search-subreddit-link").textContent;
         ContentHandler.handleSearchResultSubreddit(result, subreddit);
       }
     }
@@ -169,9 +149,7 @@
       for (let post of document.querySelectorAll(".search-result-link")) {
         const title = post.querySelector(".search-title").textContent;
         const isNsfw = post.querySelector(".nsfw-stamp") !== null;
-        const subreddit = post.querySelector(
-          ".search-subreddit-link"
-        ).textContent;
+        const subreddit = post.querySelector(".search-subreddit-link").textContent;
         ContentHandler.handlePost(post, title, isNsfw, subreddit);
       }
     }
