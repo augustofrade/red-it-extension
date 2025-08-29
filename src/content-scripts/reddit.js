@@ -160,7 +160,7 @@
     }
 
     static _handleTopBarSubreddits() {
-      const list = document.getElementById("sr-bar");
+      const list = document.querySelector(".sr-bar:last-of-type");
       for (let item of list.querySelectorAll(".choice")) {
         const subreddit = item.textContent;
         if (ContentHandler.isSubredditBlocked(subreddit)) {
@@ -173,6 +173,10 @@
       const banner = document.querySelector(".premium-banner-outer");
       if (banner) {
         banner.parentElement.removeChild(banner);
+      }
+      const footerAd = document.querySelector(".footer .col:last-child");
+      if (footerAd) {
+        footerAd.parentElement.removeChild(footerAd);
       }
     }
   }
