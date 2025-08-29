@@ -15,7 +15,9 @@
 
 Red-It is a Firefox extension designed to enhance the your Reddit browsing experience by allowing you to block unwanted posts based on keywords. Take control of your Reddit feed and filter out posts that contain specific words, phrases and simple patterns you'd rather not see.
 
-### ✨ Key Features
+**Recover your sanity while browsing, [install it now](https://addons.mozilla.org/en-US/firefox/addon/red-it/)!**
+
+### ✨ Features
 
 - 🚫 **Content Blocking**: Block Reddit posts containing specific keywords in their title
 - 🎯 **Wildcard Support**: Use `*` to match any number of characters (e.g., "red\*" blocks both "reddit" and "red-it")
@@ -41,7 +43,7 @@ Extension popup with the "Mode" button focused after being clicked, expanding a 
 
 ![Settings Page Screenshot Placeholder](public/screenshot-settings.png)
 
-## 🚀 Installation
+## 📦 Installation
 
 ### From Source
 
@@ -60,7 +62,7 @@ Extension popup with the "Mode" button focused after being clicked, expanding a 
 
 ### From Firefox Add-ons Store
 
-The extension will be available on the Firefox Add-ons store soon!
+Install it directly on your browser from the [Firefox Add-ons store page](https://addons.mozilla.org/en-US/firefox/addon/red-it/).
 
 ## 🛠️ Usage
 
@@ -79,7 +81,7 @@ The extension will be available on the Firefox Add-ons store soon!
 - **Wildcard**: `java*` - blocks posts containing "javascript", "java", etc.
 - **Case insensitive**: All keywords are matched case-insensitively
 
-### 📝 Reporting Issues
+## 📝 Reporting Issues
 
 Found a bug or have a feature request? Please [open an issue](https://github.com/augustofrade/red-it-extension/issues) with:
 
@@ -87,6 +89,14 @@ Found a bug or have a feature request? Please [open an issue](https://github.com
 - Steps to reproduce (for bugs)
 - Expected vs actual behavior
 - Screenshots if applicable
+
+## ❔ Permissions
+
+Below are the following permissions the extension requires and what they are used for:
+
+- **Storage**: saving and retrieving user-defined rules to block content with.
+- **Tabs**: opening settings page and displaying blocked subreddit page.
+- **WebRequest, WebRequestBlocking**: detecting subreddit access to deny access to it in case the subreddit is set by the user to be blocked by the extension.
 
 ## ℹ️ About
 
