@@ -14,7 +14,7 @@
     "64": "icons/icon@2x.png"
   },
 
-  "description": "Block posts on Reddit based on its content",
+  "description": "Red-It is a Firefox extension designed to enhance your Reddit browsing experience by allowing you to block unwanted posts based on keywords. Take control of your Reddit feed and filter out posts that contain specific words, phrases and simple patterns you'd rather not see.",
 
   "content_scripts": [
     {
