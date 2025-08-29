@@ -2,7 +2,7 @@
   class RegexHelper {
     static fromArray(arr) {
       if (arr.length === 0) return null; // Matches nothing
-      const wordBoundaryChars = "[ ,.?!;:\"'()\\[\\]{}<>‘’]";
+      const wordBoundaryChars = "[ ,.?!-;:\"'()\\[\\]{}<>‘’]";
       const str = arr.join("|");
       return new RegExp(wordBoundaryChars + "(" + str + ")" + wordBoundaryChars, "gi");
     }
@@ -122,11 +122,11 @@
     static async handle() {
       console.log("[RED-IT] Handling posts for " + this.hostname);
       await this._loadConfigs();
+      this._hidePremiumAd();
       this._handlePosts();
       this._handleSearchPagePosts();
       this._handleSearchPageSubreddits();
       this._handleTopBarSubreddits();
-      this._hidePremiumAd();
     }
 
     static async _loadConfigs() {
