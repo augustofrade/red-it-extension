@@ -14,7 +14,7 @@ function handleMessages(messages) {
 handleMessages({
   "open-settings": () => {
     browser.tabs.create({
-      url: browser.runtime.getURL("pages/home/index.html"),
+      url: browser.runtime.getURL("pages/settings.html"),
     });
   },
   "open-about": () => {
