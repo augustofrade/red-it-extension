@@ -1,15 +1,87 @@
+class LocationObserver {
+  static currentUrl = location.href;
+
+  static _events = [];
+  static _observer = null;
+
+  static on(callback) {
+    this._events.push(callback);
+    return this;
+  }
+
+  static disconnect() {
+    this._events = [];
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
+  }
+
+  static observe() {
+    if (this._observer) return;
+    this._observer = new MutationObserver(() => {
+      if (this.currentUrl === location.href) return;
+      this.currentUrl = location.href;
+
+      for (let event of this._events) {
+        event(new URL(this.currentUrl));
+      }
+    });
+    this._observer.observe(document.body, { childList: true, subtree: false });
+  }
+}
+
+class NewRedditUrlHandler {
+  constructor(url) {
+    if (!(url instanceof URL)) {
+      throw new Error("url must be an instance of URL");
+    }
+    this.url = url;
+  }
+
+  isPost() {
+    return this.url.pathname.startsWith("/r/") && this.url.pathname.includes("/comments/");
+  }
+
+  isSubreddit() {
+    return this.url.pathname.startsWith("/r/");
+  }
+
+  isHomepage() {
+    return this.url.pathname === "/";
+  }
+}
+
 class NewReddit {
   static hostname = "www.reddit.com";
   static _configs = {};
+  static _feedObserver = null;
 
   static async handle() {
     console.log("[RED-IT] Handling posts for " + this.hostname);
-    this._handleFeedPosts();
-    this._handleTopCarouselPosts();
+
+    LocationObserver.on(this.handleGenericPage.bind(this)).observe();
+  }
+
+  static handleGenericPage(url) {
+    const handler = new NewRedditUrlHandler(url);
+    console.log("[RED-IT] URL changed to:", url.href);
+    if (handler.isPost()) {
+    } else if (handler.isSubreddit()) {
+    } else if (handler.isHomepage()) {
+      this._handleFeedPosts();
+      this._handleTopCarouselPosts();
+    } else {
+      console.log("[RED-IT] Unhandled URL:", url.href);
+    }
   }
 
   static _listenFeedForPosts(element) {
-    const observer = new MutationObserver((mutations) => {
+    if (this._feedObserver) {
+      this._feedObserver.disconnect();
+      this._feedObserver = null;
+    }
+    this._feedObserver = new MutationObserver((mutations) => {
       for (let mutation of mutations) {
         for (let node of mutation.addedNodes) {
           if (node.nodeType !== Node.ELEMENT_NODE) continue;
@@ -18,7 +90,7 @@ class NewReddit {
         }
       }
     });
-    observer.observe(element, { childList: true, subtree: true });
+    this._feedObserver.observe(element, { childList: true, subtree: true });
   }
 
   static _handleFeedPosts() {
