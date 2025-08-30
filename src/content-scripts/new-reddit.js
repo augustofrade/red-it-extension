@@ -31,6 +31,34 @@ class LocationObserver {
   }
 }
 
+class FeedObserver {
+  _observer = null;
+
+  /**
+   * Observes changes in a feed container and calls the callback for each new element added
+   * @param {string} expectedElementTag
+   * @param {HTMLElement} container
+   * @param {Function} callback
+   */
+  observe(expectedElementTag, container, callback) {
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
+    this._observer = new MutationObserver((mutations) => {
+      for (let mutation of mutations) {
+        for (let node of mutation.addedNodes) {
+          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          if (node.tagName !== expectedElementTag.toLocaleUpperCase()) continue;
+          callback(node);
+        }
+        return;
+      }
+    });
+    this._observer.observe(container, { childList: true, subtree: true });
+  }
+}
+
 class NewRedditUrlHandler {
   constructor(url) {
     if (!(url instanceof URL)) {
@@ -55,52 +83,63 @@ class NewRedditUrlHandler {
 class NewReddit {
   static hostname = "www.reddit.com";
   static _configs = {};
-  static _feedObserver = null;
+  static _feed = new FeedObserver();
 
   static async handle() {
     console.log("[RED-IT] Handling posts for " + this.hostname);
-
-    LocationObserver.on(this.handleGenericPage.bind(this)).observe();
+    this._handleGenericPage(new URL(location.href));
+    LocationObserver.on(this._handleGenericPage.bind(this)).observe();
   }
 
-  static handleGenericPage(url) {
+  static _handleGenericPage(url) {
     const handler = new NewRedditUrlHandler(url);
     console.log("[RED-IT] URL changed to:", url.href);
     if (handler.isPost()) {
+      console.log("POST");
     } else if (handler.isSubreddit()) {
+      console.log("SUBREDDIT");
+      this._handleSubredditFeed();
     } else if (handler.isHomepage()) {
-      this._handleFeedPosts();
+      console.log("HOMEPAGE");
+      this._handleHomepageFeed();
       this._handleTopCarouselPosts();
     } else {
       console.log("[RED-IT] Unhandled URL:", url.href);
     }
   }
 
-  static _listenFeedForPosts(element) {
-    if (this._feedObserver) {
-      this._feedObserver.disconnect();
-      this._feedObserver = null;
-    }
-    this._feedObserver = new MutationObserver((mutations) => {
-      for (let mutation of mutations) {
-        for (let node of mutation.addedNodes) {
-          if (node.nodeType !== Node.ELEMENT_NODE) continue;
-          if (node.tagName !== "ARTICLE") continue;
-          this._handleSinglePost(node);
-        }
-      }
-    });
-    this._feedObserver.observe(element, { childList: true, subtree: true });
-  }
-
-  static _handleFeedPosts() {
-    const feed = document.querySelector("shreddit-feed");
-    for (let post of feed.children) {
-      if (post.tagName !== "ARTICLE") continue;
+  static _handleSubredditFeed() {
+    const posts = document.querySelectorAll("shreddit-feed article");
+    for (let post of posts) {
       this._handleSinglePost(post);
     }
-    // New reddit is initially rendered with only 3 articles
-    this._listenFeedForPosts(feed);
+    // Subreddits in new Reddit are initially rendered with only 3 articles
+    // and its dynamically articles content is inside a subcomponent that is lazy-loaded
+    this._feed.observe(
+      "faceplate-batch",
+      document.querySelector("shreddit-feed"),
+      this._handleSubredditDynamicFeed.bind(this)
+    );
+  }
+
+  static _handleSubredditDynamicFeed() {
+    const posts = document.querySelectorAll("faceplate-batch article");
+    for (let post of posts) {
+      this._handleSinglePost(post);
+    }
+  }
+
+  static _handleHomepageFeed() {
+    const posts = document.querySelectorAll("shreddit-feed article");
+    for (let post of posts) {
+      this._handleSinglePost(post);
+    }
+    // Homepage in new Reddit is initially rendered with only 3 articles
+    this._feed.observe(
+      "article",
+      document.querySelector("shreddit-feed"),
+      this._handleSinglePost.bind(this)
+    );
   }
 
   static _handleTopCarouselPosts() {
@@ -114,7 +153,7 @@ class NewReddit {
 
   static _handleSinglePost(post) {
     const title = post.querySelector("faceplate-screen-reader-content").textContent.trim();
-    const subreddit = post.querySelector("faceplate-hovercard a > span").textContent;
+    const subreddit = post.querySelector("faceplate-hovercard a > span")?.textContent;
     ContentHandler.handlePost(post, title, false, subreddit);
   }
 }
