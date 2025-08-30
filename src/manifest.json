@@ -21,6 +21,11 @@
       "matches": ["*://old.reddit.com/*"],
       "js": ["content-scripts/content-handler.js", "content-scripts/old-reddit.js"],
       "css": ["content-scripts/injected-styles.css"]
+    },
+    {
+      "matches": ["*://www.reddit.com/*"],
+      "js": ["content-scripts/content-handler.js", "content-scripts/new-reddit.js"],
+      "css": ["content-scripts/injected-styles.css"]
     }
   ],
 
