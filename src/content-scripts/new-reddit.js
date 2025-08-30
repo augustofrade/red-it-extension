@@ -96,6 +96,7 @@ class NewReddit {
     console.log("[RED-IT] URL changed to:", url.href);
     switch (true) {
       case handler.isPost():
+        this._handlePostPageRecommended();
         break;
       case handler.isSubreddit():
         this._handleSubredditFeed();
@@ -169,6 +170,22 @@ class NewReddit {
     for (let post of carouselPosts) {
       const title = post.querySelector("h2").textContent.trim();
       const subreddit = post.querySelector("span.font-bold").textContent.trim();
+      ContentHandler.handlePost(post, title, false, subreddit);
+    }
+  }
+
+  static _handlePostPageRecommended() {
+    const recommendedPosts = document.querySelector("faceplate-tracker ul");
+    if (recommendedPosts === null) {
+      // Incosistent element, can't use mutation observer
+      return setTimeout(this._handlePostPageRecommended.bind(this), 100);
+    }
+
+    for (let post of recommendedPosts.children) {
+      const title = post.querySelector("h3").textContent.trim();
+      const subreddit = post
+        .querySelector("faceplate-hovercard a div:last-child")
+        .textContent.trim();
       ContentHandler.handlePost(post, title, false, subreddit);
     }
   }
