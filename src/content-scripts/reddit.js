@@ -62,21 +62,23 @@
      * @param {string} title
      * @param {boolean} isNsfw
      * @param {string?} subreddit
+     * @returns {boolean} Whether the post was blocked
      */
     static handlePost(post, title, isNsfw = false, subreddit) {
       const titleString = " " + title + " ";
 
       this._resetPost(post);
-      if (this.mode === "show") return;
+      if (this.mode === "show") return false;
 
       const titleMatch = RegexHelper.hasMatches(this.blocklistRegex, titleString);
       const shouldBlock =
         (isNsfw && this.hideNsfw) || titleMatch || this.isSubredditBlocked(subreddit);
-      if (!shouldBlock) return;
+      if (!shouldBlock) return false;
 
       console.log(`[RED-IT] Detected post: "${title}"`);
       this.metrics.blockedPosts++;
       this.blockContent(post);
+      return true;
     }
 
     static handleSearchResultSubreddit(post, subreddit) {
@@ -181,11 +183,46 @@
     }
   }
 
-  let site;
-  await ContentHandler.init();
-  if (location.hostname === OldReddit.hostname) {
-    site = OldReddit;
+  class NewReddit {
+    static hostname = "www.reddit.com";
+    static _configs = {};
+
+    static async handle() {
+      console.log("[RED-IT] Handling posts for " + this.hostname);
+      this._handlePosts();
+    }
+
+    static _listenFeedForPosts(element) {
+      const observer = new MutationObserver((mutations) => {
+        for (let mutation of mutations) {
+          for (let node of mutation.addedNodes) {
+            if (node.nodeType !== Node.ELEMENT_NODE || node.tagName !== "ARTICLE") continue;
+            this._handleSinglePost(node);
+          }
+        }
+      });
+      observer.observe(element, { childList: true, subtree: true });
+    }
+
+    static async _handlePosts() {
+      const feed = document.querySelector("shreddit-feed");
+      for (let post of feed.children) {
+        if (post.tagName !== "ARTICLE") continue;
+        this._handleSinglePost(post);
+      }
+      // New reddit initially renders with only 3 articles
+      this._listenFeedForPosts(feed);
+    }
+
+    static async _handleSinglePost(post) {
+      const title = post.querySelector("faceplate-screen-reader-content").textContent.trim();
+      const subreddit = post.querySelector("faceplate-hovercard a > span").textContent;
+      ContentHandler.handlePost(post, title, false, subreddit);
+    }
   }
+
+  let site = location.hostname === OldReddit.hostname ? OldReddit : NewReddit;
+  await ContentHandler.init();
   await site.handle();
   ContentHandler.handleMetrics();
 
