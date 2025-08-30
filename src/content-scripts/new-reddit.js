@@ -101,8 +101,9 @@ class NewReddit {
         this._handleSubredditFeed();
         break;
       case handler.isHomepage():
+        this._handleHomepageCommunities();
         this._handleHomepageFeed();
-        this._handleTopCarouselPosts();
+        this._handleHomepageTopCarousel();
         break;
       default:
         console.log("[RED-IT] Unhandled URL:", url.href);
@@ -144,7 +145,18 @@ class NewReddit {
     );
   }
 
-  static _handleTopCarouselPosts() {
+  static _handleHomepageCommunities() {
+    const list = document.querySelector("#popular-communities-list > ul");
+    for (let subreddit of list.querySelectorAll("li")) {
+      const name = subreddit.querySelector(".text-neutral-content").textContent.trim();
+      if (ContentHandler.isSubredditBlocked(name)) {
+        console.log(subreddit);
+        list.removeChild(subreddit);
+      }
+    }
+  }
+
+  static _handleHomepageTopCarousel() {
     const carouselPosts = document.querySelectorAll("shreddit-gallery-carousel * > li");
     for (let post of carouselPosts) {
       const title = post.querySelector("h2").textContent.trim();
