@@ -94,17 +94,19 @@ class NewReddit {
   static _handleGenericPage(url) {
     const handler = new NewRedditUrlHandler(url);
     console.log("[RED-IT] URL changed to:", url.href);
-    if (handler.isPost()) {
-      console.log("POST");
-    } else if (handler.isSubreddit()) {
-      console.log("SUBREDDIT");
-      this._handleSubredditFeed();
-    } else if (handler.isHomepage()) {
-      console.log("HOMEPAGE");
-      this._handleHomepageFeed();
-      this._handleTopCarouselPosts();
-    } else {
-      console.log("[RED-IT] Unhandled URL:", url.href);
+    switch (true) {
+      case handler.isPost():
+        break;
+      case handler.isSubreddit():
+        this._handleSubredditFeed();
+        break;
+      case handler.isHomepage():
+        this._handleHomepageFeed();
+        this._handleTopCarouselPosts();
+        break;
+      default:
+        console.log("[RED-IT] Unhandled URL:", url.href);
+        break;
     }
   }
 
