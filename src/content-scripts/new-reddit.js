@@ -99,6 +99,7 @@ class NewReddit {
         break;
       case handler.isSubreddit():
         this._handleSubredditFeed();
+        this._handleSubredditTopCarousel();
         break;
       case handler.isHomepage():
         this._handleHomepageCommunities();
@@ -132,6 +133,14 @@ class NewReddit {
     }
   }
 
+  static _handleSubredditTopCarousel() {
+    const carouselPosts = document.querySelectorAll("shreddit-gallery-carousel > li");
+    for (let post of carouselPosts) {
+      const title = post.querySelector("h2").textContent.trim();
+      ContentHandler.handlePost(post, title, false, undefined);
+    }
+  }
+
   static _handleHomepageFeed() {
     const posts = document.querySelectorAll("shreddit-feed article");
     for (let post of posts) {
@@ -150,7 +159,6 @@ class NewReddit {
     for (let subreddit of list.querySelectorAll("li")) {
       const name = subreddit.querySelector(".text-neutral-content").textContent.trim();
       if (ContentHandler.isSubredditBlocked(name)) {
-        console.log(subreddit);
         list.removeChild(subreddit);
       }
     }
