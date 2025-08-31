@@ -91,7 +91,7 @@ class NewRedditUrlHandler {
   }
 
   isSearch() {
-    return this.url.pathname === "/search/";
+    return this.url.pathname.includes("/search/");
   }
 }
 
@@ -130,11 +130,11 @@ class NewReddit {
       case url.isPost():
         this._currentPageHandler = new NewRedditPostHandler(urlObj);
         break;
-      case url.isSubreddit():
-        this._currentPageHandler = new NewRedditSubredditHandler(urlObj);
-        break;
       case url.isSearch():
         this._currentPageHandler = new NewRedditSearchHandler(urlObj);
+        break;
+      case url.isSubreddit():
+        this._currentPageHandler = new NewRedditSubredditHandler(urlObj);
         break;
       default:
         console.log("[RED-IT] Unhandled URL:", url.href);

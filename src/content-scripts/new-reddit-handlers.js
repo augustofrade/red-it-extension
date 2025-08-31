@@ -16,11 +16,11 @@ class NewRedditSearchHandler {
   handle() {
     const searchType = new URLSearchParams(location.search).get("type");
     switch (searchType) {
-      case "posts":
-        this._handlePostsTab();
-        break;
       case "communities":
         this._handleCommunitiesTab();
+        break;
+      default:
+        this._handlePostsTab();
         break;
     }
   }
@@ -31,12 +31,15 @@ class NewRedditSearchHandler {
 
   _handlePostsTab() {
     const handlePost = (post) => {
+      console.log(post);
       const title = post.querySelector("div > a").textContent.trim();
       const subreddit = post.querySelector(".truncate").textContent.trim();
       ContentHandler.handlePost(post, title, false, subreddit);
     };
 
-    const posts = document.querySelectorAll("#main-content > div > search-telemetry-tracker");
+    const posts = document.querySelectorAll(
+      "#main-content > div > search-telemetry-tracker:nth-child(n+3)"
+    );
     for (let post of posts) {
       handlePost(post);
     }
@@ -73,6 +76,7 @@ class NewRedditHomepageHandler {
   handle() {
     this._handleCommunities();
     this._handleTopCarousel();
+    this._handleFeed();
   }
 
   stop() {
