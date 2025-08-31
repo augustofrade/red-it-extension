@@ -120,51 +120,14 @@ class NewReddit {
       case handler.isHomepage():
         break;
       case handler.isPost():
-        this._handlePostPageRecommended();
         break;
       case handler.isSubreddit():
-        this._handleSubredditFeed();
-        this._handleSubredditTopCarousel();
         break;
       case handler.isSearch():
         break;
       default:
         console.log("[RED-IT] Unhandled URL:", url.href);
         break;
-    }
-  }
-
-  static _handleSubredditFeed() {
-    const posts = document.querySelectorAll("shreddit-feed article");
-    for (let post of posts) {
-      this._handleSinglePost(post);
-    }
-    // Subreddits in new Reddit are initially rendered with only 3 articles
-    // and its dynamically articles content is inside a subcomponent that is lazy-loaded
-    this._observers.observe("shreddit-feed", "faceplate-batch", this._handleSinglePost.bind(this));
-  }
-
-  static _handleSubredditTopCarousel() {
-    const carouselPosts = document.querySelectorAll("shreddit-gallery-carousel > li");
-    for (let post of carouselPosts) {
-      const title = post.querySelector("h2").textContent.trim();
-      ContentHandler.handlePost(post, title, false, undefined);
-    }
-  }
-
-  static _handlePostPageRecommended() {
-    const recommendedPosts = document.querySelector("faceplate-tracker ul");
-    if (recommendedPosts === null) {
-      // Incosistent element, can't use mutation observer
-      return setTimeout(this._handlePostPageRecommended.bind(this), 100);
-    }
-
-    for (let post of recommendedPosts.children) {
-      const title = post.querySelector("h3").textContent.trim();
-      const subreddit = post
-        .querySelector("faceplate-hovercard a div:last-child")
-        .textContent.trim();
-      ContentHandler.handlePost(post, title, false, subreddit);
     }
   }
 
