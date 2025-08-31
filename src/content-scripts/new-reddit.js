@@ -53,7 +53,6 @@ class DomObserver {
         for (let node of mutation.addedNodes) {
           if (node.nodeType !== Node.ELEMENT_NODE) continue;
           if (node.tagName !== expectedElementTag.toLocaleUpperCase()) continue;
-          console.log("check");
           callback(node);
         }
         return;
@@ -205,11 +204,14 @@ class NewReddit {
   static _hidePremiumAd() {
     if (this._configs._hidePremiumAd === false) return;
 
-    const userDrawer = document.querySelector("#user-drawer-content");
-    const premiumAd = userDrawer.querySelector("faceplate-tracker");
-    if (premiumAd?.textContent.includes("Reddit Pro")) {
-      premiumAd.remove();
-    }
+    this._observers.observe("#user-drawer-content", "ul", (list) => {
+      const drawerItems = list.querySelectorAll("faceplate-tracker");
+      for (let item of drawerItems) {
+        if (item.textContent.includes("Reddit Pro")) {
+          item.remove();
+        }
+      }
+    });
 
     const resourceList = document.querySelectorAll("#RESOURCES faceplate-tracker");
     for (let resource of resourceList) {
