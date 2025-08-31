@@ -22,6 +22,8 @@ class NewRedditSearchHandler {
       case "comments":
         this._handleCommentsTab();
         break;
+      case "media":
+        this._handleMediaTab();
       default:
         this._handlePostsTab();
         break;
@@ -46,6 +48,22 @@ class NewRedditSearchHandler {
       handlePost(post);
     }
     this._observers.observe("#main-content > div", "search-telemetry-tracker", handlePost);
+  }
+
+  _handleMediaTab() {
+    const handlePost = (post) => {
+      const title = post.querySelector("search-telemetry-tracker:last-child").textContent.trim();
+      const subreddit = post
+        .querySelector("faceplate-hovercard a > span:last-child")
+        ?.textContent.trim();
+      ContentHandler.handlePost(post, title, false, subreddit);
+    };
+
+    const posts = document.querySelectorAll("search-media-feed > search-telemetry-tracker");
+    for (let post of posts) {
+      handlePost(post);
+    }
+    this._observers.observe("search-media-feed", "search-telemetry-tracker", handlePost);
   }
 
   _handleCommentsTab() {
