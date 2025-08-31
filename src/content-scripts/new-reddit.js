@@ -31,31 +31,43 @@ class LocationObserver {
   }
 }
 
-class FeedObserver {
-  _observer = null;
+class DomObserver {
+  _observers = {};
 
   /**
    * Observes changes in a feed container and calls the callback for each new element added
    * @param {string} expectedElementTag
-   * @param {HTMLElement} container
+   * @param {string} cssSelector
    * @param {Function} callback
    */
-  observe(expectedElementTag, container, callback) {
-    if (this._observer) {
-      this._observer.disconnect();
-      this._observer = null;
+  observe(cssSelector, expectedElementTag, callback) {
+    if (this._observers[cssSelector]) {
+      this._observers[cssSelector].disconnect();
+      delete this._observers[cssSelector];
     }
-    this._observer = new MutationObserver((mutations) => {
+    const container = document.querySelector(cssSelector);
+    if (container === null) return;
+
+    const observer = new MutationObserver((mutations) => {
       for (let mutation of mutations) {
         for (let node of mutation.addedNodes) {
           if (node.nodeType !== Node.ELEMENT_NODE) continue;
           if (node.tagName !== expectedElementTag.toLocaleUpperCase()) continue;
+          console.log("check");
           callback(node);
         }
         return;
       }
     });
-    this._observer.observe(container, { childList: true, subtree: true });
+    observer.observe(container, { childList: true, subtree: true });
+    this._observers[cssSelector] = observer;
+  }
+
+  stopAll() {
+    for (let key in this._observers) {
+      this._observers[key].disconnect();
+      delete this._observers[key];
+    }
   }
 }
 
@@ -83,7 +95,7 @@ class NewRedditUrlHandler {
 class NewReddit {
   static hostname = "www.reddit.com";
   static _configs = {};
-  static _feed = new FeedObserver();
+  static _observers = new DomObserver();
 
   static async handle() {
     console.log("[RED-IT] Handling posts for " + this.hostname);
@@ -127,18 +139,7 @@ class NewReddit {
     }
     // Subreddits in new Reddit are initially rendered with only 3 articles
     // and its dynamically articles content is inside a subcomponent that is lazy-loaded
-    this._feed.observe(
-      "faceplate-batch",
-      document.querySelector("shreddit-feed"),
-      this._handleSubredditDynamicFeed.bind(this)
-    );
-  }
-
-  static _handleSubredditDynamicFeed() {
-    const posts = document.querySelectorAll("faceplate-batch article");
-    for (let post of posts) {
-      this._handleSinglePost(post);
-    }
+    this._observers.observe("shreddit-feed", "faceplate-batch", this._handleSinglePost.bind(this));
   }
 
   static _handleSubredditTopCarousel() {
@@ -155,11 +156,7 @@ class NewReddit {
       this._handleSinglePost(post);
     }
     // Homepage in new Reddit is initially rendered with only 3 articles
-    this._feed.observe(
-      "article",
-      document.querySelector("shreddit-feed"),
-      this._handleSinglePost.bind(this)
-    );
+    this._observers.observe("shreddit-feed", "article", this._handleSinglePost.bind(this));
   }
 
   static _handleHomepageCommunities() {
