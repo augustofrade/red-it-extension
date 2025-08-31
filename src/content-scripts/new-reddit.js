@@ -99,6 +99,7 @@ class NewReddit {
   static hostname = "www.reddit.com";
   static _configs = {};
   static _observers = new DomObserver();
+  static _currentPageHandler = null;
 
   static async handle() {
     console.log("[RED-IT] Handling posts for " + this.hostname);
@@ -113,21 +114,35 @@ class NewReddit {
     this._configs._hidePremiumAd = configs?.hidePremiumAd ?? false;
   }
 
-  static _handleGenericPage(url) {
-    const handler = new NewRedditUrlHandler(url);
-    console.log("[RED-IT] URL changed to:", url.href);
+  static _handleGenericPage(urlObj) {
+    if (this._currentPageHandler) {
+      this._currentPageHandler.stop();
+      this._currentPageHandler = null;
+    }
+
+    const url = new NewRedditUrlHandler(urlObj);
+    console.log("[RED-IT] URL changed to:", urlObj.href);
+
     switch (true) {
-      case handler.isHomepage():
+      case url.isHomepage():
+        this._currentPageHandler = new NewRedditHomepageHandler(urlObj);
         break;
-      case handler.isPost():
+      case url.isPost():
+        this._currentPageHandler = new NewRedditPostHandler(urlObj);
         break;
-      case handler.isSubreddit():
+      case url.isSubreddit():
+        this._currentPageHandler = new NewRedditSubredditHandler(urlObj);
         break;
-      case handler.isSearch():
+      case url.isSearch():
+        this._currentPageHandler = new NewRedditSearchHandler(urlObj);
         break;
       default:
         console.log("[RED-IT] Unhandled URL:", url.href);
         break;
+    }
+
+    if (this._currentPageHandler) {
+      this._currentPageHandler.handle();
     }
   }
 

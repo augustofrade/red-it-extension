@@ -24,7 +24,11 @@
     },
     {
       "matches": ["*://www.reddit.com/*"],
-      "js": ["content-scripts/content-handler.js", "content-scripts/new-reddit.js"],
+      "js": [
+        "content-scripts/content-handler.js",
+        "content-scripts/new-reddit-handlers.js",
+        "content-scripts/new-reddit.js"
+      ],
       "css": ["content-scripts/injected-styles.css"]
     }
   ],

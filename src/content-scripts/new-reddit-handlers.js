@@ -25,6 +25,10 @@ class NewRedditSearchHandler {
     }
   }
 
+  stop() {
+    this._observers.stopAll();
+  }
+
   _handlePostsTab() {
     const handlePost = (post) => {
       const title = post.querySelector("div > a").textContent.trim();
@@ -71,6 +75,10 @@ class NewRedditHomepageHandler {
     this._handleTopCarousel();
   }
 
+  stop() {
+    this._observers.stopAll();
+  }
+
   _handleCommunities() {
     const list = document.querySelector("#popular-communities-list > ul");
     if (list === null) return;
@@ -114,6 +122,10 @@ class NewRedditSubredditHandler {
   handle() {
     this._handleTopCarousel();
     this._handleFeed();
+  }
+
+  stop() {
+    this._observers.stopAll();
   }
 
   _handleFeed() {
