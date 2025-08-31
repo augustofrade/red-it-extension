@@ -41,9 +41,12 @@ class NewRedditSearchHandler {
       ContentHandler.handlePost(post, title, false, subreddit);
     };
 
-    const posts = document.querySelectorAll(
-      "#main-content > div > search-telemetry-tracker:nth-child(n+3)"
-    );
+    let query = "#main-content > div > search-telemetry-tracker";
+    if (location.pathname.startsWith("/r/"))
+      // If searching in a subreddit, the first two elements are not posts
+      query += ":nth-child(n+3)";
+
+    const posts = document.querySelectorAll(query);
     for (let post of posts) {
       handlePost(post);
     }
@@ -73,12 +76,18 @@ class NewRedditSearchHandler {
       ContentHandler.handlePost(post, title, false, subreddit);
     };
 
-    const posts = document.querySelectorAll(
-      "#main-content > div > search-telemetry-tracker:nth-child(n+3)"
-    );
-    for (let post of posts) {
-      handlePost(post);
-    }
+    setTimeout(() => {
+      let query = "#main-content > div > search-telemetry-tracker";
+      if (location.pathname.startsWith("/r/"))
+        // If searching in a subreddit, the first two elements are not posts
+        query += ":nth-child(n+3)";
+
+      const posts = document.querySelectorAll(query);
+      for (let post of posts) {
+        console.log(post);
+        handlePost(post);
+      }
+    }, 300);
     this._observers.observe("#main-content > div", "search-telemetry-tracker", handlePost);
   }
 
