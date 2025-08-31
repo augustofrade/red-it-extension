@@ -88,10 +88,43 @@
           <div id="settings-alert" class="alert alert-primary d-none" role="alert"></div>
         </form>
 
+        <form id="new-reddit-settings-form">
+          <section class="mb-5">
+            <div class="mb-4">
+              <h1>www.reddit.com</h1>
+              <hr />
+            </div>
+            <section class="ps-3">
+              <section class="mb-5">
+                <h3>Content blocking</h3>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="new-reddit--hide-premium-ad"
+                    name="new-reddit--hide-premium-ad" />
+                  <label class="form-check-label" for="new-reddit--hide-premium-ad">
+                    Hide premium ads
+                  </label>
+                </div>
+              </section>
+            </section>
+          </section>
+
+          <button type="submit" class="btn btn-primary mb-4" id="submit-btn--new-reddit">
+            Save
+          </button>
+          <div
+            id="settings-alert--new-reddit"
+            class="alert alert-primary d-none"
+            role="alert"></div>
+        </form>
+
         <form id="old-reddit-settings-form">
           <section class="mb-5">
             <div class="mb-4">
-              <h1>Old.reddit</h1>
+              <h1>old.reddit.com</h1>
               <hr />
             </div>
             <section class="ps-3">

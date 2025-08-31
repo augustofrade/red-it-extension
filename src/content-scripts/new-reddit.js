@@ -87,8 +87,15 @@ class NewReddit {
 
   static async handle() {
     console.log("[RED-IT] Handling posts for " + this.hostname);
+    await this._loadConfigs();
     this._handleGenericPage(new URL(location.href));
+    this._hidePremiumAd();
     LocationObserver.on(this._handleGenericPage.bind(this)).observe();
+  }
+
+  static async _loadConfigs() {
+    const configs = (await browser.storage.sync.get("newReddit")).newReddit;
+    this._configs._hidePremiumAd = configs?.hidePremiumAd ?? false;
   }
 
   static _handleGenericPage(url) {
@@ -157,6 +164,8 @@ class NewReddit {
 
   static _handleHomepageCommunities() {
     const list = document.querySelector("#popular-communities-list > ul");
+    if (list === null) return;
+
     for (let subreddit of list.querySelectorAll("li")) {
       const name = subreddit.querySelector(".text-neutral-content").textContent.trim();
       if (ContentHandler.isSubredditBlocked(name)) {
@@ -194,6 +203,23 @@ class NewReddit {
     const title = post.querySelector("faceplate-screen-reader-content").textContent.trim();
     const subreddit = post.querySelector("faceplate-hovercard a > span")?.textContent;
     ContentHandler.handlePost(post, title, false, subreddit);
+  }
+
+  static _hidePremiumAd() {
+    if (this._configs._hidePremiumAd === false) return;
+
+    const userDrawer = document.querySelector("#user-drawer-content");
+    const premiumAd = userDrawer.querySelector("faceplate-tracker");
+    if (premiumAd?.textContent.includes("Reddit Pro")) {
+      premiumAd.remove();
+    }
+
+    const resourceList = document.querySelectorAll("#RESOURCES faceplate-tracker");
+    for (let resource of resourceList) {
+      if (resource?.textContent.includes("Reddit Pro")) {
+        resource.remove();
+      }
+    }
   }
 }
 
