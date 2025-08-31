@@ -19,6 +19,9 @@ class NewRedditSearchHandler {
       case "communities":
         this._handleCommunitiesTab();
         break;
+      case "comments":
+        this._handleCommentsTab();
+        break;
       default:
         this._handlePostsTab();
         break;
@@ -31,9 +34,24 @@ class NewRedditSearchHandler {
 
   _handlePostsTab() {
     const handlePost = (post) => {
-      console.log(post);
       const title = post.querySelector("div > a").textContent.trim();
       const subreddit = post.querySelector(".truncate").textContent.trim();
+      ContentHandler.handlePost(post, title, false, subreddit);
+    };
+
+    const posts = document.querySelectorAll(
+      "#main-content > div > search-telemetry-tracker:nth-child(n+3)"
+    );
+    for (let post of posts) {
+      handlePost(post);
+    }
+    this._observers.observe("#main-content > div", "search-telemetry-tracker", handlePost);
+  }
+
+  _handleCommentsTab() {
+    const handlePost = (post) => {
+      const title = post.querySelector("h2").textContent.trim();
+      const subreddit = post.querySelector("faceplate-hovercard a").textContent.trim();
       ContentHandler.handlePost(post, title, false, subreddit);
     };
 
