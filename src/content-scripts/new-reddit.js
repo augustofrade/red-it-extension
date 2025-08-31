@@ -130,7 +130,6 @@ class NewReddit {
         this._handleSubredditTopCarousel();
         break;
       case handler.isSearch():
-        this._handleSearchPage();
         break;
       default:
         console.log("[RED-IT] Unhandled URL:", url.href);
@@ -205,46 +204,6 @@ class NewReddit {
   static _handleSinglePost(post) {
     const title = post.querySelector("faceplate-screen-reader-content").textContent.trim();
     const subreddit = post.querySelector("faceplate-hovercard a > span")?.textContent;
-    ContentHandler.handlePost(post, title, false, subreddit);
-  }
-
-  static _handleSearchPage() {
-    const searchType = new URLSearchParams(location.search).get("type");
-    switch (searchType) {
-      case "posts":
-        const posts = document.querySelectorAll("#main-content > div > search-telemetry-tracker");
-        for (let post of posts) {
-          this._handleSearchPagePost(post);
-        }
-        this._observers.observe(
-          "#main-content > div",
-          "search-telemetry-tracker",
-          this._handleSearchPagePost.bind(this)
-        );
-        break;
-      case "communities":
-        const communities = document.querySelectorAll(
-          "#main-content > div > search-telemetry-tracker"
-        );
-        for (let community of communities) {
-          const subreddit = community.querySelector("h2").textContent.trim();
-          if (ContentHandler.isSubredditBlocked(subreddit)) {
-            community.remove();
-          }
-        }
-        this._observers.observe("#main-content > div", "search-telemetry-tracker", (community) => {
-          const subreddit = community.querySelector("h2").textContent.trim();
-          if (ContentHandler.isSubredditBlocked(subreddit)) {
-            community.remove();
-          }
-        });
-        break;
-    }
-  }
-
-  static _handleSearchPagePost(post) {
-    const title = post.querySelector("div > a").textContent.trim();
-    const subreddit = post.querySelector(".truncate").textContent.trim();
     ContentHandler.handlePost(post, title, false, subreddit);
   }
 
