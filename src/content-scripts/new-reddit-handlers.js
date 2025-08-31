@@ -41,6 +41,8 @@ class NewRedditSearchHandler {
       ContentHandler.handlePost(post, title, false, subreddit);
     };
 
+    this._handleRelatedCommunities();
+
     let query = "#main-content > div > search-telemetry-tracker";
     if (location.pathname.startsWith("/r/"))
       // If searching in a subreddit, the first two elements are not posts
@@ -51,6 +53,20 @@ class NewRedditSearchHandler {
       handlePost(post);
     }
     this._observers.observe("#main-content > div", "search-telemetry-tracker", handlePost);
+  }
+
+  _handleRelatedCommunities() {
+    const communities = document.querySelectorAll(
+      "#right-sidebar-contents section:first-child > search-telemetry-tracker"
+    );
+
+    for (let community of communities) {
+      const subreddit = community.querySelector("h3")?.textContent.trim();
+      if (subreddit === null) return;
+      if (ContentHandler.isSubredditBlocked(subreddit)) {
+        community.remove();
+      }
+    }
   }
 
   _handleMediaTab() {
