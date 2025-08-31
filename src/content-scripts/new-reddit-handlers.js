@@ -50,3 +50,54 @@ class NewRedditSearchHandler {
     });
   }
 }
+
+class NewRedditHomepageHandler {
+  /**
+   * @param {URL} url
+   */
+  constructor(url) {
+    this.url = url;
+    this._observers = new DomObserver();
+  }
+
+  handle() {
+    this._handleCommunities();
+    this._handleTopCarousel();
+  }
+
+  _handleCommunities() {
+    const list = document.querySelector("#popular-communities-list > ul");
+    if (list === null) return;
+
+    for (let subreddit of list.querySelectorAll("li")) {
+      const name = subreddit.querySelector(".text-neutral-content").textContent.trim();
+      if (ContentHandler.isSubredditBlocked(name)) {
+        list.removeChild(subreddit);
+      }
+    }
+  }
+
+  _handleTopCarousel() {
+    const carouselPosts = document.querySelectorAll("shreddit-gallery-carousel * > li");
+    for (let post of carouselPosts) {
+      const title = post.querySelector("h2").textContent.trim();
+      const subreddit = post.querySelector("span.font-bold").textContent.trim();
+      ContentHandler.handlePost(post, title, false, subreddit);
+    }
+  }
+
+  _handleFeed() {
+    const handlePost = (post) => {
+      const title = post.querySelector("faceplate-screen-reader-content").textContent.trim();
+      const subreddit = post.querySelector("faceplate-hovercard a > span")?.textContent;
+      ContentHandler.handlePost(post, title, false, subreddit);
+    };
+
+    const posts = document.querySelectorAll("shreddit-feed article");
+    for (let post of posts) {
+      handlePost(post);
+    }
+    // Homepage in new Reddit is initially rendered with only 3 articles
+    this._observers.observe("shreddit-feed", "article", handlePost);
+  }
+}

@@ -118,9 +118,6 @@ class NewReddit {
     console.log("[RED-IT] URL changed to:", url.href);
     switch (true) {
       case handler.isHomepage():
-        this._handleHomepageCommunities();
-        this._handleHomepageFeed();
-        this._handleHomepageTopCarousel();
         break;
       case handler.isPost():
         this._handlePostPageRecommended();
@@ -155,36 +152,6 @@ class NewReddit {
     }
   }
 
-  static _handleHomepageFeed() {
-    const posts = document.querySelectorAll("shreddit-feed article");
-    for (let post of posts) {
-      this._handleSinglePost(post);
-    }
-    // Homepage in new Reddit is initially rendered with only 3 articles
-    this._observers.observe("shreddit-feed", "article", this._handleSinglePost.bind(this));
-  }
-
-  static _handleHomepageCommunities() {
-    const list = document.querySelector("#popular-communities-list > ul");
-    if (list === null) return;
-
-    for (let subreddit of list.querySelectorAll("li")) {
-      const name = subreddit.querySelector(".text-neutral-content").textContent.trim();
-      if (ContentHandler.isSubredditBlocked(name)) {
-        list.removeChild(subreddit);
-      }
-    }
-  }
-
-  static _handleHomepageTopCarousel() {
-    const carouselPosts = document.querySelectorAll("shreddit-gallery-carousel * > li");
-    for (let post of carouselPosts) {
-      const title = post.querySelector("h2").textContent.trim();
-      const subreddit = post.querySelector("span.font-bold").textContent.trim();
-      ContentHandler.handlePost(post, title, false, subreddit);
-    }
-  }
-
   static _handlePostPageRecommended() {
     const recommendedPosts = document.querySelector("faceplate-tracker ul");
     if (recommendedPosts === null) {
@@ -199,12 +166,6 @@ class NewReddit {
         .textContent.trim();
       ContentHandler.handlePost(post, title, false, subreddit);
     }
-  }
-
-  static _handleSinglePost(post) {
-    const title = post.querySelector("faceplate-screen-reader-content").textContent.trim();
-    const subreddit = post.querySelector("faceplate-hovercard a > span")?.textContent;
-    ContentHandler.handlePost(post, title, false, subreddit);
   }
 
   static _hidePremiumAd() {
