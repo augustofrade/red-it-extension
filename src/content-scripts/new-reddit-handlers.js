@@ -200,7 +200,13 @@ class NewRedditSubredditHandler {
     }
     // Subreddits in new Reddit are initially rendered with only 3 articles
     // and its dynamically articles content is inside a subcomponent that is lazy-loaded
-    this._observers.observe("shreddit-feed", "faceplate-batch", handlePost);
+    // Content is loaded in batches.
+    this._observers.observe("shreddit-feed", "faceplate-batch", (batch) => {
+      const posts = batch.querySelectorAll("article");
+      for (let post of posts) {
+        handlePost(post);
+      }
+    });
   }
 
   _handleTopCarousel() {

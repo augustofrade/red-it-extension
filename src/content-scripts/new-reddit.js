@@ -62,6 +62,13 @@ class DomObserver {
     this._observers[cssSelector] = observer;
   }
 
+  stop(observerName) {
+    if (this._observers[observerName]) {
+      this._observers[observerName].disconnect();
+      delete this._observers[observerName];
+    }
+  }
+
   stopAll() {
     for (let key in this._observers) {
       this._observers[key].disconnect();
