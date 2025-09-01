@@ -230,6 +230,8 @@ class NewRedditPostHandler {
     this._handleRecommendedPosts();
   }
 
+  stop() {}
+
   _handleRecommendedPosts() {
     const recommendedPosts = document.querySelector("faceplate-tracker ul");
     if (recommendedPosts === null) {
