@@ -29,7 +29,7 @@ class OldReddit {
   static _handleSearchPageSubreddits() {
     for (let result of document.querySelectorAll(".search-result-subreddit")) {
       const subreddit = result.querySelector(".search-subreddit-link").textContent;
-      ContentHandler.handleSearchResultSubreddit(result, subreddit);
+      ContentHandler.handleSubreddit(result, subreddit);
     }
   }
 
@@ -46,9 +46,7 @@ class OldReddit {
     const list = document.querySelector(".sr-bar:last-of-type");
     for (let item of list.querySelectorAll(".choice")) {
       const subreddit = item.textContent;
-      if (ContentHandler.isSubredditBlocked(subreddit)) {
-        list.removeChild(item.parentElement);
-      }
+      ContentHandler.handleSubreddit(item.parentElement, subreddit);
     }
   }
 

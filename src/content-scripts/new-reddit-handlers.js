@@ -62,10 +62,7 @@ class NewRedditSearchHandler {
 
     for (let community of communities) {
       const subreddit = community.querySelector("h3")?.textContent.trim();
-      if (subreddit === null) return;
-      if (ContentHandler.isSubredditBlocked(subreddit)) {
-        community.remove();
-      }
+      ContentHandler.handleSubreddit(community, subreddit);
     }
   }
 
@@ -109,9 +106,7 @@ class NewRedditSearchHandler {
   _handleCommunitiesTab() {
     const handleCommunity = (community) => {
       const subreddit = community.querySelector("h2").textContent.trim();
-      if (ContentHandler.isSubredditBlocked(subreddit)) {
-        community.remove();
-      }
+      ContentHandler.handleSubreddit(community, subreddit);
     };
 
     const communities = document.querySelectorAll("#main-content > div > search-telemetry-tracker");
@@ -149,9 +144,7 @@ class NewRedditHomepageHandler {
 
     for (let subreddit of list.querySelectorAll("li")) {
       const name = subreddit.querySelector(".text-neutral-content").textContent.trim();
-      if (ContentHandler.isSubredditBlocked(name)) {
-        list.removeChild(subreddit);
-      }
+      ContentHandler.handleSubreddit(subreddit, name);
     }
   }
 

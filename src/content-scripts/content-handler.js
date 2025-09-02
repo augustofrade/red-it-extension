@@ -98,14 +98,17 @@ class ContentHandler {
     return true;
   }
 
-  static handleSearchResultSubreddit(post, subreddit) {
-    this._resetPost(post);
-    if (this.mode === "show") return;
+  /**
+   * Handles a subreddit element and removes it if it's blocked
+   * @param {HTMLElement} element
+   * @param {string} subreddit
+   * @returns
+   */
+  static handleSubreddit(element, subreddit) {
     if (!this.isSubredditBlocked(subreddit)) return;
 
-    Logger.log(`[RED-IT] Detected subreddit: "r/${subreddit}"`);
     this.metrics.blockedSubreddits++;
-    this.blockContent(post);
+    element.remove();
   }
 
   static isSubredditBlocked(subreddit) {
