@@ -3,7 +3,7 @@ class OldReddit {
   static _configs = {};
 
   static async handle() {
-    console.log("[RED-IT] Handling posts for " + this.hostname);
+    Logger.log("[RED-IT] Handling posts for " + this.hostname);
     await this._loadConfigs();
     this._hidePremiumAd();
     this._handlePosts();

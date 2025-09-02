@@ -30,10 +30,7 @@ function blockSubredditPage(details) {
     return {};
   }
 
-  console.log("Blocking subreddit page:", subreddit);
   const redirectUrl = browser.runtime.getURL(`pages/blocked-subreddit.html?subreddit=${subreddit}`);
-
-  console.log("Redirecting to:", redirectUrl);
 
   return { redirectUrl };
 }

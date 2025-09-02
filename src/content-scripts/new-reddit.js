@@ -109,7 +109,7 @@ class NewReddit {
   static _currentPageHandler = null;
 
   static async handle() {
-    console.log("[RED-IT] Handling posts for " + this.hostname);
+    Logger.log("[RED-IT] Handling posts for " + this.hostname);
     await this._loadConfigs();
     this._handleGenericPage(new URL(location.href));
     this._hidePremiumAd();
@@ -128,7 +128,7 @@ class NewReddit {
     }
 
     const url = new NewRedditUrlHandler(urlObj);
-    console.log("[RED-IT] URL changed to:", urlObj.href);
+    Logger.log("[RED-IT] URL changed to:", urlObj.href);
 
     switch (true) {
       case url.isHomepage():
@@ -144,7 +144,7 @@ class NewReddit {
         this._currentPageHandler = new NewRedditSubredditHandler(urlObj);
         break;
       default:
-        console.log("[RED-IT] Unhandled URL:", url.href);
+        Logger.log("[RED-IT] Unhandled URL:", url.href);
         break;
     }
 

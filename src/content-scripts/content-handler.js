@@ -22,6 +22,16 @@ class ContentHandlerRegex {
   }
 }
 
+class Logger {
+  static shouldLog = false;
+
+  static log(message) {
+    if (this.shouldLog) {
+      console.log("[RED-IT]", message);
+    }
+  }
+}
+
 class ContentHandler {
   static blocklistRegex = null;
   static hideNsfw = false;
@@ -42,21 +52,21 @@ class ContentHandler {
     if (data.postBlocklist?.every === undefined) data.postBlocklist = [];
 
     this.blocklistRegex = ContentHandlerRegex.fromArray(data.postBlocklist);
-    console.info("[RED-IT] Loaded blocklist");
+    Logger.log("[RED-IT] Loaded blocklist");
 
     this.mode = await browser.runtime.sendMessage("get-mode");
-    console.info("[RED-IT] Using mode:", this.mode);
+    Logger.log("[RED-IT] Using mode:", this.mode);
 
     this.hideNsfw = data.hideNsfw;
-    console.info("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
+    Logger.log("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
 
     this.blockedSubreddits = data.subredditBlocklist ?? [];
-    console.info("[RED-IT] Blocked subreddits:", this.blockedSubreddits.join(", ") || "None");
+    Logger.log("[RED-IT] Blocked subreddits:", this.blockedSubreddits.join(", ") || "None");
   }
 
   static async handleMetrics() {
-    console.log(`[RED-IT] Blocked ${this.metrics.blockedPosts} posts.`);
-    console.log(`[RED-IT] Blocked ${this.metrics.blockedSubreddits} subreddits.`);
+    Logger.log(`[RED-IT] Blocked ${this.metrics.blockedPosts} posts.`);
+    Logger.log(`[RED-IT] Blocked ${this.metrics.blockedSubreddits} subreddits.`);
     if (this.metrics.blockedPosts == 0) return (document.title = this.originalTitle);
 
     document.title = `(${this.metrics.blockedPosts}) ${this.originalTitle}`;
@@ -82,7 +92,7 @@ class ContentHandler {
       (isNsfw && this.hideNsfw) || titleMatch || this.isSubredditBlocked(subreddit);
     if (!shouldBlock) return false;
 
-    console.log(`[RED-IT] Detected post: "${title}"`);
+    Logger.log(`[RED-IT] Detected post: "${title}"`);
     this.metrics.blockedPosts++;
     this.blockContent(post);
     return true;
@@ -93,7 +103,7 @@ class ContentHandler {
     if (this.mode === "show") return;
     if (!this.isSubredditBlocked(subreddit)) return;
 
-    console.log(`[RED-IT] Detected subreddit: "r/${subreddit}"`);
+    Logger.log(`[RED-IT] Detected subreddit: "r/${subreddit}"`);
     this.metrics.blockedSubreddits++;
     this.blockContent(post);
   }

@@ -75,7 +75,7 @@ class ExtensionDataResetOption {
         Alert.ExtensionSettings("All extension data cleared.");
       })
       .catch((err) => {
-        console.log(err);
+        Logger.log(err);
         Alert.ExtensionSettings("Error clearing extension data.", true);
       });
   }
@@ -145,7 +145,7 @@ class GeneralSettingsForm {
         Alert.Settings("Changes saved.");
       })
       .catch((err) => {
-        console.log(err);
+        Logger.log(err);
         Alert.Settings("Error saving changes.", true);
       });
   }
@@ -191,7 +191,7 @@ class OldRedditSettingsForm {
         Alert.OldRedditSettings("Changes saved.");
       })
       .catch((err) => {
-        console.log(err);
+        Logger.log(err);
         Alert.OldRedditSettings("Error saving changes.", true);
       });
   }
@@ -232,7 +232,7 @@ class NewRedditSettingsForm {
         Alert.NewRedditSettings("Changes saved.");
       })
       .catch((err) => {
-        console.log(err);
+        Logger.log(err);
         Alert.NewRedditSettings("Error saving changes.", true);
       });
   }

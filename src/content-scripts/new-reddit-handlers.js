@@ -100,7 +100,6 @@ class NewRedditSearchHandler {
 
       const posts = document.querySelectorAll(query);
       for (let post of posts) {
-        console.log(post);
         handlePost(post);
       }
     }, 300);
