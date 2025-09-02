@@ -28,21 +28,20 @@ class ContentHandler {
    * Reads user-defined settings from storage
    */
   static async init() {
-    let blockListString = (await browser.storage.sync.get("postBlocklist")).postBlocklist;
-    if (blockListString?.every === undefined) blockListString = [];
+    let data = await browser.storage.sync.get(["postBlocklist", "hideNsfw", "subredditBlocklist"]);
+    if (data.postBlocklist?.every === undefined) data.postBlocklist = [];
 
-    const regex = RegexHelper.fromArray(blockListString);
+    const regex = RegexHelper.fromArray(data.postBlocklist);
     this.blocklistRegex = regex === null ? null : new RegExp(regex.source, "gi");
     console.info("[RED-IT] Loaded blocklist");
 
     this.mode = await browser.runtime.sendMessage("get-mode");
     console.info("[RED-IT] Using mode:", this.mode);
 
-    this.hideNsfw = (await browser.storage.sync.get("hideNsfw")).hideNsfw;
+    this.hideNsfw = data.hideNsfw;
     console.info("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
 
-    this.blockedSubreddits =
-      (await browser.storage.sync.get("subredditBlocklist")).subredditBlocklist ?? [];
+    this.blockedSubreddits = data.subredditBlocklist ?? [];
     console.info("[RED-IT] Blocked subreddits:", this.blockedSubreddits.join(", ") || "None");
   }
 
