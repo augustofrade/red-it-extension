@@ -1,19 +1,29 @@
-class RegexHelper {
-  static fromArray(arr) {
-    if (arr.length === 0) return null; // Matches nothing
-    const wordBoundaryChars = "[ ,.?!-;:\"'()\\[\\]{}<>‘’]";
-    const str = arr.join("|");
-    return new RegExp(wordBoundaryChars + "(" + str + ")" + wordBoundaryChars, "gi");
+class ContentHandlerRegex {
+  constructor(regex) {
+    this.regex = regex;
   }
 
-  static hasMatches(regex, str) {
-    if (regex === null) return false;
-    return str.match(regex) !== null;
+  static fromArray(arr) {
+    if (arr.length === 0) {
+      return new ContentHandlerRegex(null);
+    }
+    const wordBoundaryChars = "[ ,.?!-;:\"'()\\[\\]{}<>‘’]";
+    const str = arr.join("|");
+
+    const pattern = wordBoundaryChars + "(" + str + ")" + wordBoundaryChars;
+
+    return new ContentHandlerRegex(new RegExp(pattern, "gi"));
+  }
+
+  hasMatches(str) {
+    if (this.regex === null) return false;
+
+    return str.match(this.regex) !== null;
   }
 }
 
 class ContentHandler {
-  static blocklistRegex = "";
+  static blocklistRegex = null;
   static hideNsfw = false;
   static blockedSubreddits = [];
 
@@ -31,8 +41,7 @@ class ContentHandler {
     let data = await browser.storage.sync.get(["postBlocklist", "hideNsfw", "subredditBlocklist"]);
     if (data.postBlocklist?.every === undefined) data.postBlocklist = [];
 
-    const regex = RegexHelper.fromArray(data.postBlocklist);
-    this.blocklistRegex = regex === null ? null : new RegExp(regex.source, "gi");
+    this.blocklistRegex = ContentHandlerRegex.fromArray(data.postBlocklist);
     console.info("[RED-IT] Loaded blocklist");
 
     this.mode = await browser.runtime.sendMessage("get-mode");
@@ -68,7 +77,7 @@ class ContentHandler {
     this._resetPost(post);
     if (this.mode === "show") return false;
 
-    const titleMatch = RegexHelper.hasMatches(this.blocklistRegex, titleString);
+    const titleMatch = this.blocklistRegex.hasMatches(titleString);
     const shouldBlock =
       (isNsfw && this.hideNsfw) || titleMatch || this.isSubredditBlocked(subreddit);
     if (!shouldBlock) return false;
