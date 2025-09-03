@@ -11,6 +11,11 @@ function handleMessages(messages) {
     }
   });
 }
+
+function getRedditTabs() {
+  return browser.tabs.query({ url: "*://*.reddit.com/*" });
+}
+
 handleMessages({
   "open-settings": () => {
     browser.tabs.create({
@@ -35,7 +40,7 @@ handleMessages({
       const { newMode } = message;
       browser.storage.sync.set({ mode: newMode });
 
-      browser.tabs.query({ active: true }).then((tabs) => {
+      getRedditTabs().then((tabs) => {
         for (const tab of tabs) {
           browser.tabs.sendMessage(tab.id, { type: "update-mode", newMode });
         }
