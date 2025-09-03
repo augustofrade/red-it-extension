@@ -75,8 +75,39 @@ class ExtensionDataResetOption {
         Alert.ExtensionSettings("All extension data cleared.");
       })
       .catch((err) => {
-        Logger.log(err);
+        console.log(err);
         Alert.ExtensionSettings("Error clearing extension data.", true);
+      });
+  }
+}
+
+/**
+ * Handles the "Reset Metrics" button functionality.
+ */
+class ExtensionMetricsResetOption {
+  static init() {
+    this.button = $("#reset-metrics-btn");
+    this.button.on("click", this._showConfirmationModal.bind(this));
+  }
+
+  static _showConfirmationModal() {
+    const confirmed = window.confirm(
+      "Are you sure you want to reset all metrics collected by the extension? This action cannot be undone."
+    );
+    if (confirmed) {
+      this._resetMetrics();
+    }
+  }
+
+  static _resetMetrics() {
+    StorageManager.remove("metrics")
+      .then(() => {
+        $("#general-settings-form").clear();
+        Alert.ExtensionSettings("Extension metrics reset.");
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.ExtensionSettings("Error resetting extension metrics.", true);
       });
   }
 }
@@ -96,6 +127,10 @@ class StorageManager {
 
   static clear() {
     return browser.storage.sync.clear();
+  }
+
+  static remove(keys) {
+    return browser.storage.sync.remove(keys);
   }
 }
 
@@ -147,7 +182,7 @@ class GeneralSettingsForm {
         Alert.Settings("Changes saved.");
       })
       .catch((err) => {
-        Logger.log(err);
+        console.log(err);
         Alert.Settings("Error saving changes.", true);
       });
   }
@@ -200,7 +235,7 @@ class OldRedditSettingsForm {
         Alert.OldRedditSettings("Changes saved.");
       })
       .catch((err) => {
-        Logger.log(err);
+        console.log(err);
         Alert.OldRedditSettings("Error saving changes.", true);
       });
   }
@@ -241,7 +276,7 @@ class NewRedditSettingsForm {
         Alert.NewRedditSettings("Changes saved.");
       })
       .catch((err) => {
-        Logger.log(err);
+        console.log(err);
         Alert.NewRedditSettings("Error saving changes.", true);
       });
   }
@@ -264,5 +299,6 @@ class NewRedditSettingsForm {
 // Main execution
 GeneralSettingsForm.init();
 ExtensionDataResetOption.init();
+ExtensionMetricsResetOption.init();
 OldRedditSettingsForm.init();
 NewRedditSettingsForm.init();
