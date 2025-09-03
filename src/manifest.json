@@ -41,7 +41,7 @@
   },
 
   "background": {
-    "scripts": ["background.js", "background-scripts/subreddit-blocker.js"]
+    "scripts": ["background-scripts/background.js", "background-scripts/subreddit-blocker.js"]
   },
 
   "browser_specific_settings": {
