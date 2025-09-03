@@ -64,6 +64,7 @@ class ContentHandler {
       "hideNsfw",
       "subredditBlocklist",
       "metrics",
+      "logUsage",
     ]);
 
     if (data.postBlocklist?.every === undefined) data.postBlocklist = [];
@@ -74,11 +75,14 @@ class ContentHandler {
     this.mode = await browser.runtime.sendMessage("get-mode");
     Logger.log("[RED-IT] Using mode:", this.mode);
 
-    this.hideNsfw = data.hideNsfw;
+    this.hideNsfw = data.hideNsfw ?? false;
     Logger.log("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
 
     this.blockedSubreddits = data.subredditBlocklist ?? [];
     Logger.log("[RED-IT] Blocked subreddits:", this.blockedSubreddits.join(", ") || "None");
+
+    Logger.shouldLog = data.logUsage ?? false;
+    Logger.log("[RED-IT] Logging is enabled");
   }
 
   static async _saveMetrics() {
