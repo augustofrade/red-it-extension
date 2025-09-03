@@ -55,3 +55,15 @@ browser.runtime.sendMessage("list-modes").then((modes) => {
     modeList.appendChild(item);
   });
 });
+
+browser.storage.sync.get("metrics").then(({ metrics }) => {
+  if (!metrics) {
+    metrics = {
+      blockedPosts: 0,
+      blockedSubreddits: 0,
+    };
+  }
+
+  $("#blocked-count--posts").textContent = metrics.blockedPosts;
+  $("#blocked-count--subreddits").textContent = metrics.blockedSubreddits;
+});

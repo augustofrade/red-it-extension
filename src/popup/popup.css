@@ -32,6 +32,23 @@ h3 {
   font-weight: 500;
 }
 
+.metrics {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.metric {
+  font-size: 14px;
+}
+
+.metric-value {
+  font-weight: 700;
+}
+
+.metric-label {
+  font-weight: 500;
+}
+
 
 .button, .mode-list-item {
   padding: 8px;
