@@ -23,7 +23,12 @@ Red-It is a Firefox extension designed to enhance your Reddit browsing experienc
 - 🎯 **Wildcard Support**: Use `*` to match any number of characters (e.g., "red\*" blocks both "reddit" and "red-it")
 - ⚙️ **Easy Configuration**: Simple popup interface for quick access
 - 🔄 **Real-time Filtering**: Content is filtered as you browse without page reloads
+- 📝 **Usage Metrics**: Find out how many posts and subreddits have been blocked while you browsed
 - 💾 **Persistent Storage**: Your settings are saved and synced across browser sessions
+
+## 📦 Installation
+
+Install it directly on your browser from the [Firefox Add-ons store page](https://addons.mozilla.org/en-US/firefox/addon/red-it/).
 
 ## 🧰 Usage Screenshots
 
@@ -31,38 +36,54 @@ Red-It is a Firefox extension designed to enhance your Reddit browsing experienc
 
 Popup that appears on the user's browser when the icon of the extension on the toolbar is clicked.
 
+Extension metrics are displayed here.
+
 ![Extension Popup](public/screenshot-popup.png)
 
 ### Popup with Menu Open
 
 Extension popup with the "Mode" button focused after being clicked, expanding a submenu with different modes one can choose to hide the content of the page.
 
+Available modes are:
+
+- **Purge**: Removes the content from the page as if it wasn't there at all.
+- **Cover**: Covers the content with a gray placeholder. The content is displayed when being hovered.
+- **Hide**: Hides the content by making it invisible. Leaves a blank area on its position.
+- **Show**: Disables the extension and shows all kinds of content without any blocking at all. No metrics aree collected.
+
+The description of each mode is displayed when hovering them.
+
 ![Extension Popup with Menu Open](public/screenshot-popup-menu.png)
+
+### Blocked Community Notice
+
+This page is shown when the user tries to visit a community (subreddit) that is in their blocklist.
+
+The only way to stop being shown is to remove the subreddit from the blocklist.
+
+![Blocked Community Notice](public/screenshot-blocked-community.png)
 
 ### Settings Page
 
-![Settings Page Screenshot Placeholder](public/screenshot-settings.png)
+This page has the following sections and features:
 
-## 📦 Installation
+- General
+  - Posts keyword blocklist
+  - Communities/subreddits blocklist
+  - NSFW posts blocking
+- Technical
+  - Extension inner workings logging on the console
+- www.reddit.com
+  - Block premium ads
+- old.reddit.com
+  - Block premium ad
+- Extension
+  - Delete data
+  - Reset extension metrics
 
-### From Source
+Bellow is a **portion** of the Settings page. To view the complete page, see [this screenshot](public/screenshot-settings-all.png).
 
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/augustofrade/red-it-extension.git
-   cd red-it-extension
-   ```
-
-2. **Load the extension in Firefox**
-   - Open Firefox and navigate to `about:debugging`
-   - Click "This Firefox" in the sidebar
-   - Click "Load Temporary Add-on"
-   - Select the `src/manifest.json` file from the cloned repository
-
-### From Firefox Add-ons Store
-
-Install it directly on your browser from the [Firefox Add-ons store page](https://addons.mozilla.org/en-US/firefox/addon/red-it/).
+![Settings Page Screenshot Placeholder](public/screenshot-settings-min.png)
 
 ## 🛠️ Usage
 
@@ -81,15 +102,6 @@ Install it directly on your browser from the [Firefox Add-ons store page](https:
 - **Wildcard**: `java*` - blocks posts containing "javascript", "java", etc.
 - **Case insensitive**: All keywords are matched case-insensitively
 
-## 📝 Reporting Issues
-
-Found a bug or have a feature request? Please [open an issue](https://github.com/augustofrade/red-it-extension/issues) with:
-
-- Clear description of the issue or feature
-- Steps to reproduce (for bugs)
-- Expected vs actual behavior
-- Screenshots if applicable
-
 ## ❔ Permissions
 
 Below are the following permissions the extension requires and what they are used for:
@@ -102,6 +114,30 @@ Below are the following permissions the extension requires and what they are use
 
 The extension is called "red-it" because the posts were initially hidden by a red rectangle instead of a white or gray one.
 Even after changing the colors, I liked that the name resembles the target website and also sounds like it blocks its content.
+
+## 📦 Development/debugging
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/augustofrade/red-it-extension.git
+   cd red-it-extension
+   ```
+
+2. **Load the extension in Firefox**
+   - Open Firefox and navigate to `about:debugging`
+   - Click "This Firefox" in the sidebar
+   - Click "Load Temporary Add-on"
+   - Select the `src/manifest.json` file from the cloned repository
+
+## 📝 Reporting Issues
+
+Found a bug or have a feature request? Please [open an issue](https://github.com/augustofrade/red-it-extension/issues) with:
+
+- Clear description of the issue or feature
+- Steps to reproduce (for bugs)
+- Expected vs actual behavior
+- Screenshots if applicable
 
 ## 📄 License
 
