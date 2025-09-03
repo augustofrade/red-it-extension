@@ -1,3 +1,13 @@
+function debounce(callback, waitTime) {
+  let timeoutId = null;
+  return (...args) => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback(...args);
+    }, waitTime);
+  };
+}
+
 class ContentHandlerRegex {
   constructor(regex) {
     this.regex = regex;
@@ -36,6 +46,7 @@ class ContentHandler {
   static blocklistRegex = null;
   static hideNsfw = false;
   static blockedSubreddits = [];
+  static _saveMetricsDebounced = debounce(this._saveMetrics.bind(this), 1000);
 
   static mode = "hide";
   static originalTitle = document.title;
@@ -48,7 +59,13 @@ class ContentHandler {
    * Reads user-defined settings from storage
    */
   static async init() {
-    let data = await browser.storage.sync.get(["postBlocklist", "hideNsfw", "subredditBlocklist"]);
+    let data = await browser.storage.sync.get([
+      "postBlocklist",
+      "hideNsfw",
+      "subredditBlocklist",
+      "metrics",
+    ]);
+
     if (data.postBlocklist?.every === undefined) data.postBlocklist = [];
 
     this.blocklistRegex = ContentHandlerRegex.fromArray(data.postBlocklist);
@@ -64,13 +81,17 @@ class ContentHandler {
     Logger.log("[RED-IT] Blocked subreddits:", this.blockedSubreddits.join(", ") || "None");
   }
 
-  static async handleMetrics() {
+  static async _saveMetrics() {
     Logger.log(`[RED-IT] Blocked ${this.metrics.blockedPosts} posts.`);
     Logger.log(`[RED-IT] Blocked ${this.metrics.blockedSubreddits} subreddits.`);
+    browser.runtime.sendMessage({
+      type: "update-metrics",
+      metrics: this.metrics,
+    });
+
     if (this.metrics.blockedPosts == 0) return (document.title = this.originalTitle);
 
     document.title = `(${this.metrics.blockedPosts}) ${this.originalTitle}`;
-    this.metrics.blockedPosts = 0;
   }
 
   /**
@@ -95,6 +116,7 @@ class ContentHandler {
     Logger.log(`[RED-IT] Detected post: "${title}"`);
     this.metrics.blockedPosts++;
     this.blockContent(post);
+    this._saveMetricsDebounced();
     return true;
   }
 
@@ -109,6 +131,7 @@ class ContentHandler {
 
     this.metrics.blockedSubreddits++;
     element.remove();
+    this._saveMetricsDebounced();
   }
 
   static isSubredditBlocked(subreddit) {

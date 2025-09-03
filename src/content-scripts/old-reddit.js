@@ -65,13 +65,11 @@ class OldReddit {
 (async function () {
   await ContentHandler.init();
   await OldReddit.handle();
-  ContentHandler.handleMetrics();
 
   browser.runtime.onMessage.addListener(function (message) {
     if (message.type === "update-mode") {
       ContentHandler.mode = message.newMode;
       OldReddit.handle();
-      ContentHandler.handleMetrics();
     }
   });
 })();

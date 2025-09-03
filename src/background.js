@@ -51,4 +51,19 @@ handleMessages({
       });
     });
   },
+  "update-metrics": (message) => {
+    const metrics = message.metrics;
+
+    return browser.storage.sync.get("metrics").then((data) => {
+      let { metrics: existingMetrics } = data;
+      existingMetrics = {
+        blockedPosts: existingMetrics?.blockedPosts ?? 0,
+        blockedSubreddits: existingMetrics?.blockedSubreddits ?? 0,
+      };
+
+      metrics.blockedPosts += existingMetrics.blockedPosts;
+      metrics.blockedSubreddits += existingMetrics.blockedSubreddits;
+      return browser.storage.sync.set({ metrics });
+    });
+  },
 });

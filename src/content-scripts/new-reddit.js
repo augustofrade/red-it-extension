@@ -177,13 +177,11 @@ class NewReddit {
 (async function () {
   await ContentHandler.init();
   await NewReddit.handle();
-  ContentHandler.handleMetrics();
 
   browser.runtime.onMessage.addListener(function (message) {
     if (message.type === "update-mode") {
       ContentHandler.mode = message.newMode;
       NewReddit.handle();
-      ContentHandler.handleMetrics();
     }
   });
 })();
