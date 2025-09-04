@@ -8,6 +8,39 @@ function debounce(callback, waitTime) {
   };
 }
 
+class LocationObserver {
+  static currentUrl = location.href;
+
+  static _events = [];
+  static _observer = null;
+
+  static on(callback) {
+    this._events.push(callback);
+    return this;
+  }
+
+  static disconnect() {
+    this._events = [];
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
+  }
+
+  static observe() {
+    if (this._observer) return;
+    this._observer = new MutationObserver(() => {
+      if (this.currentUrl === location.href) return;
+      this.currentUrl = location.href;
+
+      for (let event of this._events) {
+        event(new URL(this.currentUrl));
+      }
+    });
+    this._observer.observe(document.body, { childList: true, subtree: false });
+  }
+}
+
 class ContentHandlerRegex {
   constructor(regex) {
     this.regex = regex;
