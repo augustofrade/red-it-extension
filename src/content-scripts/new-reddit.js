@@ -1,3 +1,36 @@
+class LocationObserver {
+  static currentUrl = location.href;
+
+  static _events = [];
+  static _observer = null;
+
+  static on(callback) {
+    this._events.push(callback);
+    return this;
+  }
+
+  static disconnect() {
+    this._events = [];
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
+  }
+
+  static observe() {
+    if (this._observer) return;
+    this._observer = new MutationObserver(() => {
+      if (this.currentUrl === location.href) return;
+      this.currentUrl = location.href;
+
+      for (let event of this._events) {
+        event(new URL(this.currentUrl));
+      }
+    });
+    this._observer.observe(document.body, { childList: true, subtree: false });
+  }
+}
+
 class DomObserver {
   _observers = {};
 
@@ -44,31 +77,6 @@ class DomObserver {
   }
 }
 
-class NewRedditUrlHandler {
-  constructor(url) {
-    if (!(url instanceof URL)) {
-      throw new Error("url must be an instance of URL");
-    }
-    this.url = url;
-  }
-
-  isPost() {
-    return this.url.pathname.startsWith("/r/") && this.url.pathname.includes("/comments/");
-  }
-
-  isSubreddit() {
-    return this.url.pathname.startsWith("/r/");
-  }
-
-  isHomepage() {
-    return this.url.pathname === "/";
-  }
-
-  isSearch() {
-    return this.url.pathname.includes("/search/");
-  }
-}
-
 class NewReddit {
   static hostname = "www.reddit.com";
   static _configs = {};
@@ -94,7 +102,7 @@ class NewReddit {
       this._currentPageHandler = null;
     }
 
-    const url = new NewRedditUrlHandler(urlObj);
+    const url = new RedditUrlHandler(urlObj);
     Logger.log("[RED-IT] URL changed to:", urlObj.href);
 
     switch (true) {
