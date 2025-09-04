@@ -9,3 +9,11 @@ main {
   padding: 120px 40px;
   background-color: white;
 }
+
+@media (max-width: 768px) {
+  main {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    padding: 40px 20px;
+  }
+}

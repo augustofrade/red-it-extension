@@ -33,6 +33,11 @@
     }
   ],
 
+  "options_ui": {
+    "page": "pages/settings.html",
+    "open_in_tab": false
+  },
+
   "permissions": ["tabs", "storage", "webRequest", "webRequestBlocking", "*://*.reddit.com/*"],
 
   "browser_action": {
