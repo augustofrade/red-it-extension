@@ -10,12 +10,13 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Firefox-Compatible-orange?style=flat-square&logo=firefox" alt="Firefox Compatible">
-  <img src="https://img.shields.io/badge/Version-0.6.3-blue?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Firefox%20Mobile-Compatible-orange?style=flat-square&logo=firefox" alt="Firefox Mobile Compatible">
+  <img src="https://img.shields.io/badge/Version-0.7.0-blue?style=flat-square" alt="Version">
 </p>
 
 Red-It is a Firefox extension designed to enhance your Reddit browsing experience by allowing you to block unwanted posts based on keywords. Take control of your Reddit feed and filter out posts that contain specific words, phrases and simple patterns you'd rather not see.
 
-**Recover your sanity while browsing, [install it now](https://addons.mozilla.org/en-US/firefox/addon/red-it/)!**
+**Recover your sanity while browsing, [install it now](https://addons.mozilla.org/en-US/firefox/addon/red-it/)! on your computer or mobile device!**
 
 ### ✨ Features
 

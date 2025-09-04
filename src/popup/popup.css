@@ -9,9 +9,21 @@ html, body {
   margin-bottom: 10px;
 }
 
+html.mobile,
+html.mobile body {
+  margin: 10px 0;
+  padding: 0;
+  width: 100%;
+}
+
+html.mobile .wrapper {
+  padding: 0 12px;
+}
+
 .title-wrapper {
   text-align: center;
   margin-bottom: 20px;
+  user-select: none;
 }
 
 h1 {

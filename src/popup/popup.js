@@ -18,7 +18,7 @@ function selectMode(newMode) {
 }
 
 $("#settings-btn").on("click", () => {
-  browser.runtime.sendMessage("open-settings");
+  browser.runtime.sendMessage("open-settings").then((_) => window.close());
 });
 
 $("#about-btn").on("click", () => {
@@ -66,4 +66,10 @@ browser.storage.sync.get("metrics").then(({ metrics }) => {
 
   $("#blocked-count--posts").textContent = metrics.blockedPosts;
   $("#blocked-count--subreddits").textContent = metrics.blockedSubreddits;
+});
+
+browser.runtime.getPlatformInfo().then((info) => {
+  if (info.os === "android") {
+    $("html").classList.add("mobile");
+  }
 });

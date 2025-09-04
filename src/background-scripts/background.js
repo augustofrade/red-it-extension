@@ -20,6 +20,7 @@ handleMessages({
   "open-settings": () => {
     browser.tabs.create({
       url: browser.runtime.getURL("pages/settings.html"),
+      active: true,
     });
   },
   "open-about": () => {
