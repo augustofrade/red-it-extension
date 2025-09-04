@@ -14,7 +14,7 @@ class OldReddit {
 
   static async _loadConfigs() {
     const configs = (await browser.storage.sync.get("oldReddit")).oldReddit;
-    this._configs._hidePremiumAd = configs?.hidePremiumAd ?? false;
+    this._configs.hidePremiumAd = configs?.hidePremiumAd ?? false;
   }
 
   static _handlePosts() {
@@ -51,6 +51,8 @@ class OldReddit {
   }
 
   static _hidePremiumAd() {
+    if (!this._configs.hidePremiumAd) return;
+
     const banner = document.querySelector(".premium-banner-outer");
     if (banner) {
       banner.parentElement.removeChild(banner);
