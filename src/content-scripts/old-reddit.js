@@ -6,10 +6,29 @@ class OldReddit {
     Logger.log("[RED-IT] Handling posts for " + this.hostname);
     await this._loadConfigs();
     this._hidePremiumAd();
-    this._handlePosts();
-    this._handleSearchPagePosts();
-    this._handleSearchPageSubreddits();
+    this._handleCurrentPage();
     this._handleTopBarSubreddits();
+  }
+
+  static async _handleCurrentPage() {
+    const url = new RedditUrlHandler(new URL(window.location));
+    switch (true) {
+      case url.isHomepage():
+        this._handlePosts();
+        break;
+      case url.isPost():
+        break;
+      case url.isSearch():
+        this._handleSearchPagePosts();
+        this._handleSearchPageSubreddits();
+        break;
+      case url.isSubreddit():
+        this._handlePosts();
+        break;
+      default:
+        Logger.log("[RED-IT] Unhandled URL:", url.href);
+        break;
+    }
   }
 
   static async _loadConfigs() {
