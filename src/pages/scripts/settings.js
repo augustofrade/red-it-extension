@@ -191,7 +191,7 @@ class GeneralSettingsForm {
     $("#post-blocklist").value = values.postBlocklist
       .join("\n")
       .replace(/\\/g, "")
-      .replace(".*", "*");
+      .replaceAll(".*", "*");
     $("#subreddit-blocklist").value = values.subredditBlocklist.join("\n");
     $("#hide-nsfw-checkbox").checked = values.hideNsfw;
     $("#log-usage-checkbox").checked = values.logUsage;
