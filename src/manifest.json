@@ -51,7 +51,11 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "@red-it"
+      "id": "@red-it",
+      "strict_min_version": "92.0"
+    },
+    "gecko_android": {
+      "strict_min_version": "92.0"
     }
   },
 
