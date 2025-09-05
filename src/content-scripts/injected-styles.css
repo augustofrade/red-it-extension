@@ -28,9 +28,9 @@
 
 
 .red-it--content-purge {
-  display: none;
+  display: none !important;
 }
 
 .red-it--content-hide {
-  visibility: hidden;
+  visibility: hidden !important;
 }

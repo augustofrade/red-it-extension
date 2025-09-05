@@ -172,7 +172,7 @@ class ContentHandler {
       enabled: data.commentBlocking?.enabled ?? false,
       behavior: data.commentBlocking?.behavior ?? "all",
     };
-
+    //posts nao estao mais sendo bloqueados ao mudar de modo: hide e purge
     this.hideNsfw = data.hideNsfw ?? false;
     Logger.log("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
 
@@ -214,7 +214,7 @@ class ContentHandler {
   static handlePost(post, title, isNsfw = false, subreddit) {
     const titleString = " " + title + " ";
 
-    this._resetPost(post);
+    this._handleResetContent(post);
     if (this.mode === "show") return false;
 
     const titleMatch = this.blocklistRegex.hasMatches(titleString);
@@ -224,6 +224,7 @@ class ContentHandler {
 
     Logger.log(`[RED-IT] Detected post: "${title}"`);
     this.blockContent(post);
+    post.classList.add("red-it--blocked-content");
     this._handleMetrics(post, "blockedPosts");
     return true;
   }
@@ -283,6 +284,7 @@ class ContentHandler {
   static _handleMetrics(element, key) {
     if (element.classList.contains("red-it--metrics-handled")) return;
     this.metrics[key]++;
+    element.classList.add("red-it--metrics-handled");
     this._saveMetricsDebounced();
   }
 
@@ -300,15 +302,5 @@ class ContentHandler {
       "red-it--content-cover",
       "red-it--content-show"
     );
-  }
-
-  /**
-   * Resets the styles of a post element
-   * @param {HTMLElement} post
-   */
-  static _resetPost(post) {
-    post.style.display = "block";
-    post.classList.remove("red-it--content-cover");
-    post.style.visibility = "initial";
   }
 }
