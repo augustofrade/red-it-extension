@@ -25,3 +25,12 @@
 .red-it--content-cover:hover::after {
   display: none;
 }
+
+
+.red-it--content-purge {
+  display: none;
+}
+
+.red-it--content-hide {
+  visibility: hidden;
+}

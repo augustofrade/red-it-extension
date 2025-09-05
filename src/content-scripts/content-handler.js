@@ -139,6 +139,7 @@ class ContentHandler {
   static blockedSubreddits = [];
   static _saveMetricsDebounced = debounce(this._saveMetrics.bind(this), 1000);
 
+  static _shouldResetContent = false;
   static mode = "hide";
   static originalTitle = document.title;
   static metrics = {
@@ -174,6 +175,13 @@ class ContentHandler {
 
     Logger.shouldLog = data.logUsage ?? false;
     Logger.log("[RED-IT] Logging is enabled");
+  }
+
+  static updateCurrentMode(mode, callback) {
+    this.mode = mode;
+    this._shouldResetContent = true;
+    callback();
+    this._shouldResetContent = false;
   }
 
   static async _saveMetrics() {
@@ -222,15 +230,16 @@ class ContentHandler {
    * @returns {boolean} Whether the comment was blocked
    */
   static handleComment(comment, commentBody, text) {
-    const textString = " " + text + " ";
-
+    this._handleResetContent(commentBody);
     if (this.mode === "show") return false;
 
+    const textString = " " + text + " ";
     const shouldBlock = this.blocklistRegex.hasMatches(textString);
     if (!shouldBlock) return false;
 
     this.blockContent(commentBody);
     comment.classList.add("red-it--blocked-content");
+    commentBody.classList.add("red-it--blocked-content");
     return true;
   }
 
@@ -268,19 +277,19 @@ class ContentHandler {
   }
 
   static blockContent(content) {
-    if (this.mode === "purge") {
-      content.style.display = "none";
-    } else if (this.mode === "cover") {
-      content.classList.add("red-it--content-cover");
-    } else if (this.mode === "hide") {
-      content.style.visibility = "hidden";
-    }
+    content.classList.add("red-it--content-" + this.mode);
   }
 
-  static resetAllBlockedContent() {
-    for (const comment of document.querySelectorAll(".red-it--blocked-content")) {
-      comment.classList.remove("red-it--blocked-content");
-    }
+  static _handleResetContent(content) {
+    if (!this._shouldResetContent) return;
+
+    content.classList.remove(
+      "red-it--blocked-content",
+      "red-it--content-purge",
+      "red-it--content-hide",
+      "red-it--content-cover",
+      "red-it--content-show"
+    );
   }
 
   /**

@@ -37,9 +37,13 @@ class NewReddit {
   static _observers = new DomObserver();
   static _currentPageHandler = null;
 
-  static async handle() {
+  static async init() {
     Logger.log("[RED-IT] Handling posts for " + this.hostname);
     await this._loadConfigs();
+    this.handleContent();
+  }
+
+  static handleContent() {
     this._handleGenericPage(new URL(location.href));
     this._hidePremiumAd();
     LocationObserver.on(this._handleGenericPage.bind(this)).observe();
@@ -105,12 +109,11 @@ class NewReddit {
 
 (async function () {
   await ContentHandler.init();
-  await NewReddit.handle();
+  await NewReddit.init();
 
   browser.runtime.onMessage.addListener(function (message) {
     if (message.type === "update-mode") {
-      ContentHandler.mode = message.newMode;
-      NewReddit.handle();
+      ContentHandler.updateCurrentMode(message.newMode, NewReddit.handleContent.bind(NewReddit));
     }
   });
 })();

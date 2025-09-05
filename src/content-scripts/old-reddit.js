@@ -4,15 +4,19 @@ class OldReddit {
   static _observer = new DomObserver();
   static _httpInterceptor = new HTTPInterceptor();
 
-  static async handle() {
+  static async init() {
     Logger.log("[RED-IT] Handling posts for " + this.hostname);
     await this._loadConfigs();
+    this.handleContent();
+  }
+
+  static handleContent() {
     this._hidePremiumAd();
     this._handleCurrentPage();
     this._handleTopBarSubreddits();
   }
 
-  static async _handleCurrentPage() {
+  static _handleCurrentPage() {
     this._observer.stopAll();
     const url = new RedditUrlHandler(new URL(window.location));
 
@@ -52,7 +56,7 @@ class OldReddit {
 
   static _handleComments() {
     function handle() {
-      for (let comment of document.querySelectorAll(".comment:not(.red-it--blocked-content)")) {
+      for (let comment of document.querySelectorAll(".comment")) {
         const body = comment.querySelector(".usertext-body");
         ContentHandler.handleComment(comment, body, body.textContent);
       }
@@ -102,12 +106,11 @@ class OldReddit {
 
 (async function () {
   await ContentHandler.init();
-  await OldReddit.handle();
+  await OldReddit.init();
 
   browser.runtime.onMessage.addListener(function (message) {
     if (message.type === "update-mode") {
-      ContentHandler.mode = message.newMode;
-      OldReddit.handle();
+      ContentHandler.updateCurrentMode(message.newMode, OldReddit.handleContent.bind(OldReddit));
     }
   });
 })();
