@@ -29,7 +29,7 @@ class RedditUrlHandler {
   }
 
   isSearch() {
-    return this.url.pathname.includes("/search/");
+    return this.url.pathname.match("^/search/?") !== null;
   }
 }
 
