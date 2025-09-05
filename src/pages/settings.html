@@ -53,7 +53,7 @@
               </section>
 
               <section class="mb-5">
-                <h4>Block by post title</h4>
+                <h4>Post blocklist</h4>
                 <p>Write the keywords you want to block, separated by line breaks.</p>
                 <p>
                   <strong>Note:</strong> Use * to match any number of characters. Example: "red*"
@@ -67,7 +67,7 @@
               </section>
 
               <section class="mb-4">
-                <h4>Block by subreddit</h4>
+                <h4>Subreddit Blocklist</h4>
                 <p>Write the subreddits you want to block, separated by line breaks.</p>
                 <p>
                   <strong>Note:</strong> Write the subreddit name without the "r/" prefix. Example:
@@ -78,6 +78,46 @@
                   id="subreddit-blocklist"
                   name="subreddit-blocklist"
                   rows="8"></textarea>
+              </section>
+
+              <section class="mb-4">
+                <h4>Comments</h4>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="comment-blocking-enabled-checkbox"
+                    name="comment-blocking-enabled-checkbox" />
+                  <label class="form-check-label" for="comment-blocking-enabled-checkbox">
+                    Block comments with content matching post blocklist
+                  </label>
+                </div>
+                <div class="mt-4">
+                  <p class="mb-2">Select the blocking behavior:</p>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input comment-blocking-behavior-radio"
+                      type="radio"
+                      value="all"
+                      name="comment-blocking-behavior-radio"
+                      id="comment-blocking-behavior-radio-all" />
+                    <label class="form-check-label" for="comment-blocking-behavior-radio-all">
+                      Block whole comments and their answers
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input comment-blocking-behavior-radio"
+                      type="radio"
+                      value="text"
+                      name="comment-blocking-behavior-radio"
+                      id="comment-blocking-behavior-radio-text"
+                      checked />
+                    <label class="form-check-label" for="comment-blocking-behavior-radio-text">
+                      Block comments texts only
+                    </label>
+                  </div>
+                </div>
               </section>
             </div>
           </section>

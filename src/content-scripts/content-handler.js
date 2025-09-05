@@ -157,6 +157,7 @@ class ContentHandler {
       "subredditBlocklist",
       "metrics",
       "logUsage",
+      "commentBlocking",
     ]);
 
     if (data.postBlocklist?.every === undefined) data.postBlocklist = [];
@@ -166,6 +167,11 @@ class ContentHandler {
 
     this.mode = await browser.runtime.sendMessage("get-mode");
     Logger.log("[RED-IT] Using mode:", this.mode);
+
+    this.commentsConfig = {
+      enabled: data.commentBlocking?.enabled ?? false,
+      behavior: data.commentBlocking?.behavior ?? "all",
+    };
 
     this.hideNsfw = data.hideNsfw ?? false;
     Logger.log("[RED-IT] Hide NSFW:", this.hideNsfw ? "Yes" : "No");
@@ -230,14 +236,18 @@ class ContentHandler {
    * @returns {boolean} Whether the comment was blocked
    */
   static handleComment(comment, commentBody, text) {
-    this._handleResetContent(commentBody);
+    if (!this.commentsConfig.enabled) return false;
+
+    const targetElement = this.commentsConfig.behavior === "all" ? comment : commentBody;
+
+    this._handleResetContent(targetElement);
     if (this.mode === "show") return false;
 
     const textString = " " + text + " ";
     const shouldBlock = this.blocklistRegex.hasMatches(textString);
     if (!shouldBlock) return false;
 
-    this.blockContent(commentBody);
+    this.blockContent(targetElement);
     comment.classList.add("red-it--blocked-content");
     commentBody.classList.add("red-it--blocked-content");
     return true;

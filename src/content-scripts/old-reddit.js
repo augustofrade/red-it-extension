@@ -58,7 +58,7 @@ class OldReddit {
     function handle() {
       for (let comment of document.querySelectorAll(".comment")) {
         const body = comment.querySelector(".usertext-body");
-        ContentHandler.handleComment(comment, body, body.textContent);
+        ContentHandler.handleComment(comment, body, body.textContent.trim());
       }
     }
 

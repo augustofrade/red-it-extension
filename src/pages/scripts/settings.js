@@ -149,18 +149,24 @@ class GeneralSettingsForm {
       const hideNsfw = values.get("hide-nsfw-checkbox") === "on";
       const subredditBlocklist = values.get("subreddit-blocklist") ?? "";
       const logUsage = values.get("log-usage-checkbox") === "on";
+      const blockComments = values.get("comment-blocking-enabled-checkbox") === "on";
+      const commentBlockingBehavior = values.get("comment-blocking-behavior-radio") ?? "all";
 
       GeneralSettingsForm.saveChanges({
         postBlocklist,
         subredditBlocklist,
         hideNsfw,
         logUsage,
+        commentBlocking: {
+          enabled: blockComments,
+          behavior: commentBlockingBehavior,
+        },
       });
     });
   }
 
   static saveChanges(data) {
-    let { postBlocklist, subredditBlocklist, hideNsfw, logUsage } = data;
+    let { postBlocklist, subredditBlocklist } = data;
     if (postBlocklist.trim().length === 0) {
       postBlocklist = [];
     } else {
@@ -177,7 +183,7 @@ class GeneralSettingsForm {
       subredditBlocklist = subredditBlocklist.split("\n").map((item) => item.trim());
     }
 
-    StorageManager.set({ postBlocklist, subredditBlocklist, hideNsfw, logUsage })
+    StorageManager.set({ ...data, postBlocklist, subredditBlocklist })
       .then(() => {
         Alert.Settings("Changes saved.");
       })
@@ -188,6 +194,7 @@ class GeneralSettingsForm {
   }
 
   static setFormValues(values) {
+    const { commentBlocking: comment } = values;
     $("#post-blocklist").value = values.postBlocklist
       .join("\n")
       .replace(/\\/g, "")
@@ -195,6 +202,8 @@ class GeneralSettingsForm {
     $("#subreddit-blocklist").value = values.subredditBlocklist.join("\n");
     $("#hide-nsfw-checkbox").checked = values.hideNsfw;
     $("#log-usage-checkbox").checked = values.logUsage;
+    $("#comment-blocking-enabled-checkbox").checked = comment.enabled;
+    $(`.comment-blocking-behavior-radio[value="${comment.behavior}"]`).checked = true;
   }
 
   static async _load() {
@@ -203,12 +212,20 @@ class GeneralSettingsForm {
       "hideNsfw",
       "subredditBlocklist",
       "logUsage",
+      "commentBlocking",
     ]);
+
     const postBlocklist = data.postBlocklist || [];
     const subredditBlocklist = data.subredditBlocklist || [];
     const hideNsfw = data.hideNsfw ?? false;
     const logUsage = data.logUsage ?? false;
-    this.setFormValues({ postBlocklist, subredditBlocklist, hideNsfw, logUsage });
+
+    const commentBlocking =
+      Object.keys(data.commentBlocking).length == 0
+        ? { enabled: true, behavior: "all" }
+        : data.commentBlocking;
+
+    this.setFormValues({ postBlocklist, subredditBlocklist, hideNsfw, logUsage, commentBlocking });
   }
 }
 
