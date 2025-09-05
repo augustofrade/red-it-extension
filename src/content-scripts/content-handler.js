@@ -209,9 +209,8 @@ class ContentHandler {
     if (!shouldBlock) return false;
 
     Logger.log(`[RED-IT] Detected post: "${title}"`);
-    this.metrics.blockedPosts++;
     this.blockContent(post);
-    this._saveMetricsDebounced();
+    this._handleMetrics(post, "blockedPosts");
     return true;
   }
 
@@ -225,7 +224,6 @@ class ContentHandler {
   static handleComment(comment, commentBody, text) {
     const textString = " " + text + " ";
 
-    this._resetPost(commentBody);
     if (this.mode === "show") return false;
 
     const shouldBlock = this.blocklistRegex.hasMatches(textString);
@@ -240,19 +238,33 @@ class ContentHandler {
    * Handles a subreddit element and removes it if it's blocked
    * @param {HTMLElement} element
    * @param {string} subreddit
-   * @returns
+   * @returns Whether the subreddit element was blocked
    */
   static handleSubreddit(element, subreddit) {
-    if (!this.isSubredditBlocked(subreddit)) return;
+    if (!this.isSubredditBlocked(subreddit)) return false;
 
-    this.metrics.blockedSubreddits++;
     element.remove();
-    this._saveMetricsDebounced();
+    this._handleMetrics(element, "blockedSubreddits");
+    return true;
   }
 
   static isSubredditBlocked(subreddit) {
     subreddit = subreddit?.replace("r/", "").trim().toLocaleLowerCase();
     return this.blockedSubreddits.includes(subreddit);
+  }
+
+  static addMetricsClass(element) {
+    element.classList.add("red-it--metrics-handled");
+  }
+
+  /**
+   * @param {HTMLElement} element
+   * @param {keyof ContentHandler["metrics"]} key
+   */
+  static _handleMetrics(element, key) {
+    if (element.classList.contains("red-it--metrics-handled")) return;
+    this.metrics[key]++;
+    this._saveMetricsDebounced();
   }
 
   static blockContent(content) {
@@ -262,6 +274,12 @@ class ContentHandler {
       content.classList.add("red-it--content-cover");
     } else if (this.mode === "hide") {
       content.style.visibility = "hidden";
+    }
+  }
+
+  static resetAllBlockedContent() {
+    for (const comment of document.querySelectorAll(".red-it--blocked-content")) {
+      comment.classList.remove("red-it--blocked-content");
     }
   }
 
