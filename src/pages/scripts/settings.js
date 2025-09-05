@@ -102,7 +102,6 @@ class ExtensionMetricsResetOption {
   static _resetMetrics() {
     StorageManager.remove("metrics")
       .then(() => {
-        $("#general-settings-form").clear();
         Alert.ExtensionSettings("Extension metrics reset.");
       })
       .catch((err) => {
@@ -221,7 +220,7 @@ class GeneralSettingsForm {
     const logUsage = data.logUsage ?? false;
 
     const commentBlocking =
-      Object.keys(data.commentBlocking).length == 0
+      data.commentBlocking === undefined || Object.keys(data.commentBlocking).length == 0
         ? { enabled: true, behavior: "all" }
         : data.commentBlocking;
 
@@ -265,7 +264,7 @@ class OldRedditSettingsForm {
     const result = await StorageManager.get("oldReddit");
     const { oldReddit: data } = result;
 
-    const hidePremiumAd = data.hidePremiumAd ?? false;
+    const hidePremiumAd = data?.hidePremiumAd ?? false;
     this.setFormValues({ hidePremiumAd });
   }
 }
