@@ -232,7 +232,7 @@ class ContentHandler {
     if (!shouldBlock) return false;
 
     this.blockContent(commentBody);
-    commentBody.classList.add("red-it--blocked-comment");
+    comment.classList.add("red-it--blocked-content");
     return true;
   }
 
@@ -259,7 +259,7 @@ class ContentHandler {
     if (this.mode === "purge") {
       content.style.display = "none";
     } else if (this.mode === "cover") {
-      content.classList.add("red-it--blocked-content");
+      content.classList.add("red-it--content-cover");
     } else if (this.mode === "hide") {
       content.style.visibility = "hidden";
     }
@@ -271,7 +271,7 @@ class ContentHandler {
    */
   static _resetPost(post) {
     post.style.display = "block";
-    post.classList.remove("red-it--blocked-content");
+    post.classList.remove("red-it--content-cover");
     post.style.visibility = "initial";
   }
 }

@@ -52,7 +52,7 @@ class OldReddit {
 
   static _handleComments() {
     function handle() {
-      for (let comment of document.querySelectorAll(".comment")) {
+      for (let comment of document.querySelectorAll(".comment:not(.red-it--blocked-content)")) {
         const body = comment.querySelector(".usertext-body");
         ContentHandler.handleComment(comment, body, body.textContent);
       }
