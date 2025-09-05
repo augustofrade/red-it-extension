@@ -73,3 +73,18 @@ handleMessages({
     });
   },
 });
+
+(function HTTPInterceptor() {
+  function sendMessageToScripts(details) {
+    console.log("Intercepted request:", details);
+    getRedditTabs().then((tabs) => {
+      for (const tab of tabs) {
+        browser.tabs.sendMessage(tab.id, { type: "http-request", details });
+      }
+    });
+  }
+
+  browser.webRequest.onCompleted.addListener(sendMessageToScripts, {
+    urls: ["*://*.reddit.com/api/morechildren"],
+  });
+})();

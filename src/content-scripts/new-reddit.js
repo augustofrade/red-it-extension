@@ -31,52 +31,6 @@ class LocationObserver {
   }
 }
 
-class DomObserver {
-  _observers = {};
-
-  /**
-   * Observes changes in a feed container and calls the callback for each new element added
-   * @param {string} expectedElementTag
-   * @param {string} cssSelector
-   * @param {Function} callback
-   */
-  observe(cssSelector, expectedElementTag, callback) {
-    if (this._observers[cssSelector]) {
-      this._observers[cssSelector].disconnect();
-      delete this._observers[cssSelector];
-    }
-    const container = document.querySelector(cssSelector);
-    if (container === null) return;
-
-    const observer = new MutationObserver((mutations) => {
-      for (let mutation of mutations) {
-        for (let node of mutation.addedNodes) {
-          if (node.nodeType !== Node.ELEMENT_NODE) continue;
-          if (node.tagName !== expectedElementTag.toLocaleUpperCase()) continue;
-          callback(node);
-        }
-        return;
-      }
-    });
-    observer.observe(container, { childList: true, subtree: true });
-    this._observers[cssSelector] = observer;
-  }
-
-  stop(observerName) {
-    if (this._observers[observerName]) {
-      this._observers[observerName].disconnect();
-      delete this._observers[observerName];
-    }
-  }
-
-  stopAll() {
-    for (let key in this._observers) {
-      this._observers[key].disconnect();
-      delete this._observers[key];
-    }
-  }
-}
-
 class NewReddit {
   static hostname = "www.reddit.com";
   static _configs = {};

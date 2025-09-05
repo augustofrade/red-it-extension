@@ -8,6 +8,72 @@ function debounce(callback, waitTime) {
   };
 }
 
+class HTTPInterceptor {
+  _observers = [];
+
+  constructor() {
+    browser.runtime.onMessage.addListener((message) => {
+      if (message.type !== "http-request") return;
+      this._observers.forEach((observer) => {
+        const url = new URL(message.details.url);
+        if (url.pathname.match(observer.endpoint)) {
+          observer.callback(message.details);
+        }
+      });
+    });
+  }
+
+  on(endpoint, callback) {
+    this._observers.push({ endpoint, callback });
+  }
+}
+
+class DomObserver {
+  _observers = {};
+
+  /**
+   * Observes changes in a feed container and calls the callback for each new element added
+   * @param {string} expectedElementTag
+   * @param {string} cssSelector
+   * @param {Function} callback
+   */
+  observe(cssSelector, expectedElementTag, callback) {
+    if (this._observers[cssSelector]) {
+      this._observers[cssSelector].disconnect();
+      delete this._observers[cssSelector];
+    }
+    const container = document.querySelector(cssSelector);
+    if (container === null) return;
+
+    const observer = new MutationObserver((mutations) => {
+      for (let mutation of mutations) {
+        for (let node of mutation.addedNodes) {
+          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          if (node.tagName !== expectedElementTag.toLocaleUpperCase()) continue;
+          callback(node);
+        }
+        return;
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
+    this._observers[cssSelector] = observer;
+  }
+
+  stop(observerName) {
+    if (this._observers[observerName]) {
+      this._observers[observerName].disconnect();
+      delete this._observers[observerName];
+    }
+  }
+
+  stopAll() {
+    for (let key in this._observers) {
+      this._observers[key].disconnect();
+      delete this._observers[key];
+    }
+  }
+}
+
 class RedditUrlHandler {
   constructor(url) {
     if (!(url instanceof URL)) {
@@ -146,6 +212,27 @@ class ContentHandler {
     this.metrics.blockedPosts++;
     this.blockContent(post);
     this._saveMetricsDebounced();
+    return true;
+  }
+
+  /**
+   * Handles a single comment on the page
+   * @param {HTMLElement} comment
+   * @param {HTMLElement} commentBody
+   * @param {string} text
+   * @returns {boolean} Whether the comment was blocked
+   */
+  static handleComment(comment, commentBody, text) {
+    const textString = " " + text + " ";
+
+    this._resetPost(commentBody);
+    if (this.mode === "show") return false;
+
+    const shouldBlock = this.blocklistRegex.hasMatches(textString);
+    if (!shouldBlock) return false;
+
+    this.blockContent(commentBody);
+    commentBody.classList.add("red-it--blocked-comment");
     return true;
   }
 

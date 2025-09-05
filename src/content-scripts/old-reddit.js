@@ -1,6 +1,8 @@
 class OldReddit {
   static hostname = "old.reddit.com";
   static _configs = {};
+  static _observer = new DomObserver();
+  static _httpInterceptor = new HTTPInterceptor();
 
   static async handle() {
     Logger.log("[RED-IT] Handling posts for " + this.hostname);
@@ -11,12 +13,15 @@ class OldReddit {
   }
 
   static async _handleCurrentPage() {
+    this._observer.stopAll();
     const url = new RedditUrlHandler(new URL(window.location));
+
     switch (true) {
       case url.isHomepage():
         this._handlePosts();
         break;
       case url.isPost():
+        this._handleComments();
         break;
       case url.isSearch():
         this._handleSearchPagePosts();
@@ -43,6 +48,18 @@ class OldReddit {
       const subreddit = post.querySelector(".subreddit")?.innerText;
       ContentHandler.handlePost(post, title, isNsfw, subreddit);
     }
+  }
+
+  static _handleComments() {
+    function handle() {
+      for (let comment of document.querySelectorAll(".comment")) {
+        const body = comment.querySelector(".usertext-body");
+        ContentHandler.handleComment(comment, body, body.textContent);
+      }
+    }
+
+    handle();
+    this._httpInterceptor.on("/api/morechildren", (_) => setTimeout(handle, 100));
   }
 
   static _handleSearchPageSubreddits() {

@@ -18,6 +18,10 @@
   border-radius: 16px;
 }
 
+.red-it--blocked-content.red-it--blocked-comment::after {
+  border-radius: 8px;
+}
+
 .red-it--blocked-content:hover::after {
   display: none;
 }
