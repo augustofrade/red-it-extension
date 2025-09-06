@@ -1,0 +1,149 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+
+}
+
+:root {
+  --border-radius: 12px;
+  --padding: 16px;
+}
+
+body {
+  background-color: #fff;
+  padding: 20px 0;
+}
+
+h1, h2, h3, button, a {
+  color: #343434;
+}
+
+p, label {
+  color: #444;
+}
+
+.form-label {
+  margin-left: 8px;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+.page-title {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-section {
+  margin-bottom: 48px;
+}
+
+.dashboard-section__title {
+  display: block;
+  font-size: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.card {
+  border-radius: var(--border-radius);
+  background-color: #f6f8f9;
+  margin-bottom: 20px;
+  padding: var(--padding);
+}
+
+.card.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.card-header:has(+ .card-body) {
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.card-header p {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.card .form-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.card-header p:last-of-type {
+  margin-bottom: 0;
+}
+
+.card-body {
+  border-radius: var(--border-radius);
+  background-color: #fff;
+  padding: 20px;
+}
+
+.card-body--simple {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 12px 0px 12px;
+  background-color: transparent;
+  gap: 8px;
+}
+
+textarea.card-body {
+  border-radius: var(--border-radius);
+  padding: var(--padding);
+  border: none;
+  width: 100%;
+  resize: none;
+  height: 160px;
+}
+
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  padding: 12px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: #48c78e;
+}
+
+.btn-danger {
+  background-color: #e43e4a;
+}
+
+#danger-zone .btn {
+  width: 140px;
+}
+
+@media(max-width: 448px) {
+  .card.row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

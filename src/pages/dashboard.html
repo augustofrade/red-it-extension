@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="styles/toggle.css" />
+    <link rel="stylesheet" href="styles/dashboard.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1 class="page-title">
+        <img src="/icons/icon.png" alt="Logo" />
+        Red-It Settings
+      </h1>
+
+      <section class="dashboard-section">
+        <h1 class="dashboard-section__title">Content Blocking</h1>
+        <form>
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Keywords Blocklist</h2>
+              <p>User content is blocked based on the keywords specified in the blocklist.</p>
+              <p>Write the keywords you want to block, separated by line breaks.</p>
+              <p>
+                <b>Note</b>: Use * to match any number of characters. Example: "red*" blocks posts
+                with both "reddit" and "red-it" in their title.
+              </p>
+            </div>
+            <textarea class="card-body" name="" id=""></textarea>
+          </section>
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Communities Blocklist</h2>
+              <p>Write down the communities you want to block, separated by line breaks.</p>
+              <p>
+                <b>Note</b>: Write the subreddit name without the "r/" prefix. Example: "funny"
+                blocks posts from r/funny.
+              </p>
+            </div>
+            <textarea class="card-body" name="" id=""></textarea>
+          </section>
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Comments Blocking</h2>
+              <p>Comments are blocked based on the keywords specified in the blocklist.</p>
+            </div>
+            <div class="card-body--simple">
+              <div class="form-group">
+                <label class="switch form-control">
+                  <input type="checkbox" />
+                  <span class="slider"></span>
+                </label>
+                <label class="form-label">Enable blocking</label>
+              </div>
+              <div class="form-group">
+                <label class="switch form-control">
+                  <input type="checkbox" />
+                  <span class="slider"></span>
+                </label>
+                <label class="form-label">Block the whole comment</label>
+              </div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Block Premium Ads</h2>
+              <p>Enable this setting to block premium ads found on the platform.</p>
+            </div>
+            <div class="card-body--simple">
+              <label class="switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Block NSFW Posts</h2>
+              <p>Enable this setting to block posts that are marked as NSFW.</p>
+            </div>
+            <div class="card-body--simple">
+              <label class="switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="button-container">
+            <button class="btn btn-primary">Save All</button>
+          </section>
+        </form>
+      </section>
+
+      <section class="dashboard-section">
+        <h1 class="dashboard-section__title">Technical</h1>
+        <form>
+          <section class="card">
+            <div class="card-header">
+              <h2 class="card-title">Log usage into developer console</h2>
+              <p>Enable this option to log all blocked content into the developer console.</p>
+            </div>
+            <div class="card-body--simple">
+              <label class="switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </section>
+        </form>
+      </section>
+
+      <section class="dashboard-section" id="danger-zone">
+        <h1 class="dashboard-section__title">Danger Zone</h1>
+        <form>
+          <section class="card row">
+            <div class="card-header">
+              <h2 class="card-title">Delete Data</h2>
+              <p>Delete all user data stored by the extension.</p>
+            </div>
+            <button class="btn btn-danger">Delete Data</button>
+          </section>
+          <section class="card row">
+            <div class="card-header">
+              <h2 class="card-title">Reset metrics</h2>
+              <p>Reset all metrics collected by the extension.</p>
+              <p>
+                Metrics are limited to the amount of subreddits and posts blocked by the extension
+              </p>
+            </div>
+            <button class="btn btn-danger">Reset Metrics</button>
+          </section>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
