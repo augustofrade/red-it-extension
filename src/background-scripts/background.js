@@ -17,9 +17,9 @@ function getRedditTabs() {
 }
 
 handleMessages({
-  "open-settings": () => {
+  "open-dashboard": () => {
     browser.tabs.create({
-      url: browser.runtime.getURL("pages/settings.html"),
+      url: browser.runtime.getURL("pages/dashboard.html"),
       active: true,
     });
   },

@@ -18,7 +18,7 @@ function selectMode(newMode) {
 }
 
 $("#settings-btn").on("click", () => {
-  browser.runtime.sendMessage("open-settings").then((_) => window.close());
+  browser.runtime.sendMessage("open-dashboard").then((_) => window.close());
 });
 
 $("#about-btn").on("click", () => {
