@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <meta name="description" content="Red-It Dashboard" />
+    <link rel="icon" type="image/png" href="/icons/icon.png" />
+    <title>Red-It Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,7 +23,7 @@
 
       <section class="dashboard-section">
         <h1 class="dashboard-section__title">Content Blocking</h1>
-        <form>
+        <form id="general-settings-form">
           <section class="card">
             <div class="card-header">
               <h2 class="card-title">Keywords Blocklist</h2>
@@ -32,7 +34,7 @@
                 with both "reddit" and "red-it" in their title.
               </p>
             </div>
-            <textarea class="card-body" name="" id=""></textarea>
+            <textarea class="card-body" name="post-blocklist" id="post-blocklist"></textarea>
           </section>
           <section class="card">
             <div class="card-header">
@@ -43,7 +45,10 @@
                 blocks posts from r/funny.
               </p>
             </div>
-            <textarea class="card-body" name="" id=""></textarea>
+            <textarea
+              class="card-body"
+              name="subreddit-blocklist"
+              id="subreddit-blocklist"></textarea>
           </section>
           <section class="card">
             <div class="card-header">
@@ -53,14 +58,20 @@
             <div class="card-body--simple">
               <div class="form-group">
                 <label class="switch form-control">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    id="comment-blocking-enabled-checkbox"
+                    name="comment-blocking-enabled-checkbox" />
                   <span class="slider"></span>
                 </label>
                 <label class="form-label">Enable blocking</label>
               </div>
               <div class="form-group">
                 <label class="switch form-control">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    id="comment-blocking-whole"
+                    name="comment-blocking-whole" />
                   <span class="slider"></span>
                 </label>
                 <label class="form-label">Block the whole comment</label>
@@ -74,7 +85,7 @@
             </div>
             <div class="card-body--simple">
               <label class="switch">
-                <input type="checkbox" />
+                <input type="checkbox" name="block-premium-ads" id="block-premium-ads" />
                 <span class="slider"></span>
               </label>
             </div>
@@ -86,16 +97,16 @@
             </div>
             <div class="card-body--simple">
               <label class="switch">
-                <input type="checkbox" />
+                <input type="checkbox" name="hide-nsfw-checkbox" id="hide-nsfw-checkbox" />
                 <span class="slider"></span>
               </label>
             </div>
           </section>
 
-          <div id="settings-alert" class="alert alert-danger"></div>
+          <div id="settings-alert" class="alert"></div>
 
           <section class="button-container">
-            <button class="btn btn-primary">Save All</button>
+            <button class="btn btn-primary" id="submit-btn--general" type="submit">Save All</button>
           </section>
         </form>
       </section>
@@ -110,7 +121,7 @@
             </div>
             <div class="card-body--simple">
               <label class="switch">
-                <input type="checkbox" />
+                <input type="checkbox" name="log-usage-checkbox" id="log-usage-checkbox" />
                 <span class="slider"></span>
               </label>
             </div>
@@ -120,14 +131,14 @@
 
       <section class="dashboard-section" id="danger-zone">
         <h1 class="dashboard-section__title">Danger Zone</h1>
-        <div id="settings-extension-alert" class="alert alert-danger"></div>
+        <div id="settings-extension-alert" class="alert"></div>
         <form>
           <section class="card row">
             <div class="card-header">
               <h2 class="card-title">Delete Data</h2>
               <p>Delete all user data stored by the extension.</p>
             </div>
-            <button class="btn btn-danger">Delete Data</button>
+            <button class="btn btn-danger" id="reset-data-btn">Delete Data</button>
           </section>
           <section class="card row">
             <div class="card-header">
@@ -137,7 +148,7 @@
                 Metrics are limited to the amount of subreddits and posts blocked by the extension
               </p>
             </div>
-            <button class="btn btn-danger">Reset Metrics</button>
+            <button class="btn btn-danger" id="reset-metrics-btn">Reset Metrics</button>
           </section>
         </form>
       </section>

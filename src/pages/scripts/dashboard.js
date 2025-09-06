@@ -139,15 +139,18 @@ class GeneralSettingsForm {
       const postBlocklist = values.get("post-blocklist") ?? "";
       const hideNsfw = values.get("hide-nsfw-checkbox") === "on";
       const subredditBlocklist = values.get("subreddit-blocklist") ?? "";
+      const blockPremiumAds = values.get("block-premium-ads") === "on";
       const logUsage = values.get("log-usage-checkbox") === "on";
       const blockComments = values.get("comment-blocking-enabled-checkbox") === "on";
-      const commentBlockingBehavior = values.get("comment-blocking-behavior-radio") ?? "all";
+      const commentBlockingBehavior =
+        values.get("comment-blocking-whole") === "on" ? "all" : "text";
 
       GeneralSettingsForm.saveChanges({
         postBlocklist,
         subredditBlocklist,
         hideNsfw,
         logUsage,
+        blockPremiumAds,
         commentBlocking: {
           enabled: blockComments,
           behavior: commentBlockingBehavior,
@@ -194,7 +197,7 @@ class GeneralSettingsForm {
     $("#hide-nsfw-checkbox").checked = values.hideNsfw;
     $("#log-usage-checkbox").checked = values.logUsage;
     $("#comment-blocking-enabled-checkbox").checked = comment.enabled;
-    $(`.comment-blocking-behavior-radio[value="${comment.behavior}"]`).checked = true;
+    $(`#comment-blocking-whole`).checked = comment.behavior === "all";
   }
 
   static async _load() {
