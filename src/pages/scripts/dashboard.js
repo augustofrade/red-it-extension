@@ -140,10 +140,10 @@ class GeneralSettingsForm {
       const hideNsfw = values.get("hide-nsfw-checkbox") === "on";
       const subredditBlocklist = values.get("subreddit-blocklist") ?? "";
       const blockPremiumAds = values.get("block-premium-ads") === "on";
-      const logUsage = values.get("log-usage-checkbox") === "on";
       const blockComments = values.get("comment-blocking-enabled-checkbox") === "on";
       const commentBlockingBehavior =
         values.get("comment-blocking-whole") === "on" ? "all" : "text";
+      const logUsage = $("#log-usage-checkbox").checked;
 
       GeneralSettingsForm.saveChanges({
         postBlocklist,
@@ -193,6 +193,7 @@ class GeneralSettingsForm {
       .join("\n")
       .replace(/\\/g, "")
       .replaceAll(".*", "*");
+    $("#block-premium-ads").checked = values.blockPremiumAds;
     $("#subreddit-blocklist").value = values.subredditBlocklist.join("\n");
     $("#hide-nsfw-checkbox").checked = values.hideNsfw;
     $("#log-usage-checkbox").checked = values.logUsage;
@@ -207,19 +208,28 @@ class GeneralSettingsForm {
       "subredditBlocklist",
       "logUsage",
       "commentBlocking",
+      "blockPremiumAds",
     ]);
 
     const postBlocklist = data.postBlocklist || [];
     const subredditBlocklist = data.subredditBlocklist || [];
     const hideNsfw = data.hideNsfw ?? false;
     const logUsage = data.logUsage ?? false;
+    const blockPremiumAds = data.blockPremiumAds ?? false;
 
     const commentBlocking =
       data.commentBlocking === undefined || Object.keys(data.commentBlocking).length == 0
         ? { enabled: true, behavior: "all" }
         : data.commentBlocking;
 
-    this.setFormValues({ postBlocklist, subredditBlocklist, hideNsfw, logUsage, commentBlocking });
+    this.setFormValues({
+      postBlocklist,
+      subredditBlocklist,
+      hideNsfw,
+      logUsage,
+      commentBlocking,
+      blockPremiumAds,
+    });
   }
 }
 

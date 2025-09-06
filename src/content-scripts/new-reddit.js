@@ -50,8 +50,8 @@ class NewReddit {
   }
 
   static async _loadConfigs() {
-    const configs = (await browser.storage.sync.get("newReddit")).newReddit;
-    this._configs._hidePremiumAd = configs?.hidePremiumAd ?? false;
+    const configs = await browser.storage.sync.get("blockPremiumAds");
+    this._configs._hidePremiumAd = configs?.blockPremiumAds ?? false;
   }
 
   static _handleGenericPage(urlObj) {

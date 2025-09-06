@@ -41,8 +41,8 @@ class OldReddit {
   }
 
   static async _loadConfigs() {
-    const configs = (await browser.storage.sync.get("oldReddit")).oldReddit;
-    this._configs.hidePremiumAd = configs?.hidePremiumAd ?? false;
+    const configs = await browser.storage.sync.get("blockPremiumAds");
+    this._configs.hidePremiumAd = configs?.blockPremiumAds ?? false;
   }
 
   static _handlePosts() {
