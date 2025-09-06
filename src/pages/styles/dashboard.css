@@ -194,6 +194,23 @@ textarea.card-body {
   color: #fff;
 }
 
+#about-section .red-it {
+  font-weight: bold;
+}
+
+#about-section .red-it::before {
+  content: "";
+  background-image: url("/icons/icon.png");
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  transform: translateY(3px);
+  background-size: cover;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+
 @media(max-width: 500px) {
   #extension-mode-options {
     display: grid;
