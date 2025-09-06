@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Red-It",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "author": "Augusto Frade",
   "homepage_url": "https://github.com/augustofrade/red-it-extension",
   "developer": {

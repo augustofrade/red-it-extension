@@ -233,8 +233,57 @@ class GeneralSettingsForm {
   }
 }
 
+class QuickSettings {
+  static async init() {
+    Promise.all([
+      browser.runtime.sendMessage("get-mode"),
+      browser.runtime.sendMessage("list-modes"),
+    ])
+      .then(([mode, modeList]) => {
+        this._currentMode = mode;
+        this._initExtensionModeSelector(modeList, mode);
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Error initializing quick settings. Please try reloading the page.");
+      });
+  }
+
+  static _initExtensionModeSelector(modes, currentMode) {
+    const selector = $("#extension-mode-options");
+    for (const [modeKey, modeDesc] of Object.entries(modes)) {
+      const option = document.createElement("div");
+      if (modeKey === currentMode) {
+        option.classList.add("selected");
+      }
+      option.dataset.value = modeKey;
+      option.title = modeDesc;
+      option.classList.add("extension-mode-option");
+      option.innerText = modeKey.charAt(0).toUpperCase() + modeKey.slice(1);
+      option.on("click", this._setCurrentMode.bind(this, modeKey));
+
+      selector.appendChild(option);
+    }
+  }
+
+  static _setCurrentMode(mode) {
+    if (this._currentMode === mode) return;
+
+    browser.runtime.sendMessage({ type: "set-mode", newMode: mode }).then((_) => {
+      this._currentMode = mode;
+      for (let option of $$(".extension-mode-option")) {
+        option.classList.remove("selected");
+        if (option.dataset.value === mode) option.classList.add("selected");
+      }
+    });
+  }
+}
+
 // Main execution
-Alert.hideAllAlerts();
-GeneralSettingsForm.init();
-ExtensionDataResetOption.init();
-ExtensionMetricsResetOption.init();
+(async function () {
+  Alert.hideAllAlerts();
+  GeneralSettingsForm.init();
+  ExtensionDataResetOption.init();
+  ExtensionMetricsResetOption.init();
+  await QuickSettings.init();
+})();

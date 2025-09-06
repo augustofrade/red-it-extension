@@ -166,6 +166,43 @@ textarea.card-body {
   width: 140px;
 }
 
+#extension-mode-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.extension-mode-option {
+  background-color: #fff;
+  color: #444;
+  border-radius: var(--border-radius);
+  padding: 12px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+  transition: all 0.2s ease-in-out;
+  width: 90px;
+  text-align: center;
+}
+
+.extension-mode-option:hover {
+  background-color: #ffd1da;
+}
+
+.extension-mode-option.selected {
+  background-color: #e43e4a;
+  color: #fff;
+}
+
+@media(max-width: 500px) {
+  #extension-mode-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    gap: 20px; 
+  }
+}
+
 @media(max-width: 448px) {
   .card.row {
     flex-direction: column;
