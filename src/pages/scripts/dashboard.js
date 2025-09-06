@@ -9,23 +9,15 @@ class Alert {
   timeout = null;
 
   static ExtensionSettings(message, isError = false) {
-    this._showAlert($("#settings-alert-extension"), message, isError);
+    this._showAlert($("#settings-extension-alert"), message, isError);
   }
 
   static Settings(message, isError = false) {
     this._showAlert($("#settings-alert"), message, isError);
   }
 
-  static OldRedditSettings(message, isError = false) {
-    this._showAlert($("#settings-alert--old-reddit"), message, isError);
-  }
-
-  static NewRedditSettings(message, isError = false) {
-    this._showAlert($("#settings-alert--new-reddit"), message, isError);
-  }
-
   static _showAlert(alertEl, message, isError = false) {
-    this._resetAllAlerts();
+    this.hideAllAlerts();
     alertEl.innerText = message;
     alertEl.classList.remove("d-none");
     const styleClass = isError ? "alert-danger" : "alert-success";
@@ -41,7 +33,7 @@ class Alert {
     }, 2500);
   }
 
-  static _resetAllAlerts() {
+  static hideAllAlerts() {
     $$(".alert").forEach((el) => {
       if (!el.classList.contains("d-none")) {
         el.classList.add("d-none");
@@ -228,93 +220,8 @@ class GeneralSettingsForm {
   }
 }
 
-class OldRedditSettingsForm {
-  static init() {
-    this._load();
-
-    $("#submit-btn--old-reddit").on("click", function (e) {
-      e.preventDefault();
-      const values = new FormData($("#old-reddit-settings-form"));
-      const hidePremiumAd = values.get("old-reddit--hide-premium-ad") === "on";
-
-      OldRedditSettingsForm.saveChanges({ hidePremiumAd });
-    });
-  }
-
-  static saveChanges(data) {
-    StorageManager.set({
-      oldReddit: {
-        hidePremiumAd: data.hidePremiumAd,
-      },
-    })
-      .then(() => {
-        Alert.OldRedditSettings("Changes saved.");
-      })
-      .catch((err) => {
-        console.log(err);
-        Alert.OldRedditSettings("Error saving changes.", true);
-      });
-  }
-
-  static setFormValues(values) {
-    $("#old-reddit--hide-premium-ad").checked = values.hidePremiumAd;
-  }
-
-  static async _load() {
-    const result = await StorageManager.get("oldReddit");
-    const { oldReddit: data } = result;
-
-    const hidePremiumAd = data?.hidePremiumAd ?? false;
-    this.setFormValues({ hidePremiumAd });
-  }
-}
-
-class NewRedditSettingsForm {
-  static init() {
-    this._load();
-
-    $("#submit-btn--new-reddit").on("click", function (e) {
-      e.preventDefault();
-      const values = new FormData($("#new-reddit-settings-form"));
-      const hidePremiumAd = values.get("new-reddit--hide-premium-ad") === "on";
-
-      NewRedditSettingsForm.saveChanges({ hidePremiumAd });
-    });
-  }
-
-  static saveChanges(data) {
-    StorageManager.set({
-      newReddit: {
-        hidePremiumAd: data.hidePremiumAd,
-      },
-    })
-      .then(() => {
-        Alert.NewRedditSettings("Changes saved.");
-      })
-      .catch((err) => {
-        console.log(err);
-        Alert.NewRedditSettings("Error saving changes.", true);
-      });
-  }
-
-  static setFormValues(values) {
-    $("#new-reddit--hide-premium-ad").checked = values.hidePremiumAd;
-  }
-
-  static async _load() {
-    const result = await StorageManager.get("newReddit");
-    const { newReddit: data } = result;
-
-    if (data === undefined) return;
-
-    const hidePremiumAd = data.hidePremiumAd ?? false;
-    this.setFormValues({ hidePremiumAd });
-  }
-}
-
 // Main execution
+Alert.hideAllAlerts();
 GeneralSettingsForm.init();
 ExtensionDataResetOption.init();
 ExtensionMetricsResetOption.init();
-OldRedditSettingsForm.init();
-NewRedditSettingsForm.init();

@@ -24,6 +24,31 @@ p, label {
   color: #444;
 }
 
+.d-none {
+  display: none !important;
+}
+
+
+.alert {
+  border-radius: var(--border-radius);
+  padding: 24px 36px;
+  width: 100%;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.alert-success {
+  background-color: #effaf5;
+}
+
+.alert-danger {
+  background-color: #ffebef;
+}
+
+.alert * {
+  color: #343434;
+}
+
 .form-label {
   margin-left: 8px;
 }
