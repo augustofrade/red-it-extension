@@ -87,7 +87,6 @@ class NewReddit {
   }
 
   static _hidePremiumAd() {
-    console.log(document.getElementById("RESOURCES")?.children);
     if (this._configs._hidePremiumAd === false) return;
 
     this._observers.observe("#user-drawer-content", "ul", (list) => {
@@ -99,19 +98,14 @@ class NewReddit {
       }
     });
 
-    function hidePremiumAdLeftNav() {
-      const leftNavResources = document.getElementById("RESOURCES");
-      if (leftNavResources === null) return setTimeout(hidePremiumAdLeftNav, 100);
-
+    this._observers.waitForElement("#RESOURCES", (leftNavResources) => {
       const resourceList = leftNavResources.querySelectorAll("faceplate-tracker");
       for (let resource of resourceList) {
         if (resource?.textContent.includes("Reddit Pro")) {
           resource.remove();
         }
       }
-    }
-
-    hidePremiumAdLeftNav();
+    });
   }
 }
 

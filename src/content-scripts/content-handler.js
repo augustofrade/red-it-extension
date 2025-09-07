@@ -59,6 +59,16 @@ class DomObserver {
     this._observers[cssSelector] = observer;
   }
 
+  waitForElement(cssSelector, callback, timeInterval = 100) {
+    const interval = setInterval(() => {
+      const element = document.querySelector(cssSelector);
+      if (element === null) return;
+
+      clearInterval(interval);
+      callback(element);
+    }, timeInterval);
+  }
+
   stop(observerName) {
     if (this._observers[observerName]) {
       this._observers[observerName].disconnect();

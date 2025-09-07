@@ -231,20 +231,17 @@ class NewRedditPostHandler {
   stop() {}
 
   _handleRecommendedPosts() {
-    const recommendedPosts = document.querySelector("faceplate-tracker ul");
-    if (recommendedPosts === null) {
-      // Incosistent element, can't use mutation observer
-      return setTimeout(this._handleRecommendedPosts.bind(this), 100);
-    }
+    // Incosistent element, can't use mutation observer
+    this._observers.waitForElement("faceplate-tracker ul", (recommendedPosts) => {
+      for (let post of recommendedPosts.children) {
+        const title = post.querySelector("h3").textContent.trim();
+        const subreddit = post
+          .querySelector("faceplate-hovercard a div:last-child")
+          .textContent.trim();
 
-    for (let post of recommendedPosts.children) {
-      const title = post.querySelector("h3").textContent.trim();
-      const subreddit = post
-        .querySelector("faceplate-hovercard a div:last-child")
-        .textContent.trim();
-
-      ContentHandler.handlePost(post, title, false, subreddit);
-    }
+        ContentHandler.handlePost(post, title, false, subreddit);
+      }
+    });
   }
 
   _handleComments() {
