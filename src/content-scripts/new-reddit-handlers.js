@@ -216,10 +216,16 @@ class NewRedditPostHandler {
    */
   constructor(url) {
     this.url = url;
+    this._observers = new DomObserver();
+    this._treeRetries = {
+      current: 0,
+      max: 15,
+    };
   }
 
   handle() {
     this._handleRecommendedPosts();
+    this._handleComments();
   }
 
   stop() {}
@@ -239,5 +245,53 @@ class NewRedditPostHandler {
 
       ContentHandler.handlePost(post, title, false, subreddit);
     }
+  }
+
+  _handleComments() {
+    if (this._treeRetries.current >= this._treeRetries.max) {
+      Logger.Log("[RED-IT] Could not handle comment tree after several tries");
+      return;
+    }
+    this._treeRetries.current += 1;
+
+    // Can't just observe the #main-content element because the comment tree is inside a lazy-loaded subcomponent
+    // that causes race conditions
+    if (document.querySelector("#comment-tree") === null) {
+      return setTimeout(this._handleComments.bind(this), 100);
+    }
+    this._handleCommentTree();
+  }
+
+  /**
+   * Comment tree is lazy loaded as well as the second batch of comments onwards
+   */
+  _handleCommentTree() {
+    for (let comment of document.querySelectorAll("shreddit-comment")) {
+      this._handleSingleComment(comment);
+    }
+
+    // After having loaded the initial comments, the extension knows for sure
+    // that #comment-tree is already in the DOM
+    this._observers.observe(
+      "#comment-tree",
+      "shreddit-comment",
+      this._handleLazyLoadedComment.bind(this)
+    );
+  }
+
+  _handleLazyLoadedComment(comment) {
+    this._handleSingleComment(comment);
+
+    // Lazy loaded comments may content children that weren't discovered by the DOM observer
+    for (let child of comment.querySelectorAll("shreddit-comment:not(.red-it--blocked-content)")) {
+      this._handleSingleComment(child);
+    }
+  }
+
+  _handleSingleComment(comment) {
+    if (comment.getAttribute("author") === "[deleted]") return;
+
+    const body = comment.querySelector("div[slot='comment']");
+    ContentHandler.handleComment(comment, body, body.textContent.trim());
   }
 }
