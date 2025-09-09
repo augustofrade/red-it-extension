@@ -118,7 +118,7 @@ class ContentHandlerRegex {
     if (arr.length === 0) {
       return new ContentHandlerRegex(null);
     }
-    const wordBoundaryChars = "[ ,.?!-;:\"'()\\[\\]{}<>‘’]";
+    const wordBoundaryChars = "[ ,.?\\!\\-;:\"'()\\[\\]{}<>‘’]";
     const str = arr.join("|");
 
     const pattern = wordBoundaryChars + "(" + str + ")" + wordBoundaryChars;
