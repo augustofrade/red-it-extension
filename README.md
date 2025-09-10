@@ -11,7 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Firefox-Compatible-orange?style=flat-square&logo=firefox" alt="Firefox Compatible">
   <img src="https://img.shields.io/badge/Firefox%20Mobile-Compatible-orange?style=flat-square&logo=firefox" alt="Firefox Mobile Compatible">
-  <img src="https://img.shields.io/badge/Version-0.8.3-blue?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Version-0.8.4-blue?style=flat-square" alt="Version">
 </p>
 
 Red-It is a Firefox extension designed to enhance your Reddit browsing experience by allowing you to block unwanted posts based on keywords. Take control of your Reddit feed and filter out posts that contain specific words, phrases and simple patterns you'd rather not see.
@@ -64,23 +64,26 @@ The only way to stop being shown is to remove the subreddit from the blocklist.
 
 ![Blocked Community Notice](public/screenshot-blocked-community.png)
 
-### Settings Page
+### Dashboard
 
-This page has the following sections and features:
+The dashboard has the following sections and features:
 
-- General
-  - Posts keyword blocklist
+- Quick Settings
+
+  - Changed the blocking mode of the extension just like in its popup
+
+- Content Blocking
+  - Keyword blocklist
   - Communities/subreddits blocklist
+  - Comments blocking settings (toggle and mode)
+  - Block premium ads
   - NSFW posts blocking
 - Technical
   - Extension inner workings logging on the console
-- www.reddit.com
-  - Block premium ads
-- old.reddit.com
-  - Block premium ad
-- Extension
+- Danger Zone
   - Delete data
   - Reset extension metrics
+- About
 
 Bellow is a **portion** of the Settings page. To view the complete page, see [this screenshot](public/screenshot-settings-all.png).
 
